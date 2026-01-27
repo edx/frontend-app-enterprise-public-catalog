@@ -6,6 +6,7 @@ frontend-app-enterprise-public-catalog
 Introduction
 ------------
 
+
 This application is a public facing catalog page for use by edX consumers to find courses in catalogs before deciding to enroll.
 
 The dev server is running at `http://localhost:8735 <http://localhost:8735>`_.

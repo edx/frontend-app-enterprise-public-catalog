@@ -5,7 +5,7 @@ import { AppProvider, PageWrap } from '@edx/frontend-platform/react';
 import Header from '@edx/frontend-component-header';
 import Footer from '@edx/frontend-component-footer';
 
-import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
+import { initializeHotjar } from '@2uinc/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
 import CatalogPage from '../catalogPage/CatalogPage';
 import NotFoundPage from '../NotFoundPage';

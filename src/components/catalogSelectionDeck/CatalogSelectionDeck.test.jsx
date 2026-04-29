@@ -4,7 +4,7 @@ import { screen, getDefaultNormalizer } from '@testing-library/react';
 import {
   SEARCH_FACET_FILTERS,
   SearchContext,
-} from '@edx/frontend-enterprise-catalog-search';
+} from '@2uinc/frontend-enterprise-catalog-search';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import CatalogSelectionDeck from './CatalogSelectionDeck';
 import { renderWithRouter } from '../tests/testUtils';

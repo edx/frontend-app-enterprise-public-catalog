@@ -5,7 +5,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom/extend-expect';
 
-import { SearchContext } from '@edx/frontend-enterprise-catalog-search';
+import { SearchContext } from '@2uinc/frontend-enterprise-catalog-search';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import {
   BaseCatalogSearchResults,

@@ -6,7 +6,7 @@ import { getConfig } from '@edx/frontend-platform/config';
 import {
   SearchContext,
   setRefinementAction,
-} from '@edx/frontend-enterprise-catalog-search';
+} from '@2uinc/frontend-enterprise-catalog-search';
 import {
   breakpoints, Container, SelectableBox, useMediaQuery,
 } from '@openedx/paragon';

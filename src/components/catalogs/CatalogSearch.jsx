@@ -9,7 +9,7 @@ import { Configure, Index, InstantSearch } from 'react-instantsearch-dom';
 import {
   SearchHeader,
   SearchContext,
-} from '@edx/frontend-enterprise-catalog-search';
+} from '@2uinc/frontend-enterprise-catalog-search';
 import { Image } from '@openedx/paragon';
 import { useAlgoliaIndex } from './data/hooks';
 import PageWrapper from '../PageWrapper';

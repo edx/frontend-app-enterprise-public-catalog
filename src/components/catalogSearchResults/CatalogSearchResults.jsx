@@ -3,7 +3,7 @@ import {
   SearchPagination,
   setRefinementAction,
   useNbHitsFromSearchResults,
-} from '@edx/frontend-enterprise-catalog-search';
+} from '@2uinc/frontend-enterprise-catalog-search';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Alert, Badge, Button, CardView, DataTable, Skeleton,

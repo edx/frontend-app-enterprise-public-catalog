@@ -1,4 +1,4 @@
-import { hasFeatureFlagEnabled } from '@edx/frontend-enterprise-utils';
+import { hasFeatureFlagEnabled } from '@2uinc/frontend-enterprise-utils';
 import {
   FEATURE_CONSOLIDATE_SUBS_CATALOG,
   FEATURE_ENABLE_PROGRAMS,

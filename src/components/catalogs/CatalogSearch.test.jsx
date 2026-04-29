@@ -3,7 +3,7 @@ import '@testing-library/jest-dom/extend-expect';
 import {
   SEARCH_FACET_FILTERS,
   SearchContext,
-} from '@edx/frontend-enterprise-catalog-search';
+} from '@2uinc/frontend-enterprise-catalog-search';
 import { screen } from '@testing-library/react';
 import { renderWithRouter } from '../tests/testUtils';
 import QUERY_TITLE_REFINEMENT from '../../constants';

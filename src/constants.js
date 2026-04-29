@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import { SEARCH_FACET_FILTERS } from '@edx/frontend-enterprise-catalog-search';
+import { SEARCH_FACET_FILTERS } from '@2uinc/frontend-enterprise-catalog-search';
 import features from './config';
 
 export const PAGE_TITLE = 'edX Enterprise Catalogs';

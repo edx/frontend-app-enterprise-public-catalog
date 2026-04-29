@@ -2,7 +2,7 @@ import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   SearchData,
   SEARCH_FACET_FILTERS,
-} from '@edx/frontend-enterprise-catalog-search';
+} from '@2uinc/frontend-enterprise-catalog-search';
 import { getConfig } from '@edx/frontend-platform';
 import { useLocation } from 'react-router-dom';
 import { CatalogSearch } from '../catalogs';

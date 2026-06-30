@@ -129,9 +129,9 @@ const CatalogSearch = () => {
 
   const config = getConfig();
   const courseIndex = useMemo(() => {
-    const cIndex = searchClient.initIndex(config.ALGOLIA_INDEX_NAME);
+    const cIndex = searchClient.initIndex(algoliaIndexName);
     return cIndex;
-  }, [config.ALGOLIA_INDEX_NAME, searchClient]);
+  }, [algoliaIndexName, searchClient]);
 
   const suggestedCourseOnClick = (hit) => {
     if (hit[LEARNING_TYPE_REFINEMENT] === CONTENT_TYPE_PROGRAM) {

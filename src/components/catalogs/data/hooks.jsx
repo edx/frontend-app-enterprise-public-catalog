@@ -14,7 +14,8 @@ const useAlgoliaIndex = () => {
     () => algoliasearch(config.ALGOLIA_APP_ID, config.ALGOLIA_SEARCH_API_KEY),
     [config],
   );
-  return { algoliaIndexName: config.ALGOLIA_INDEX_NAME, searchClient };
+  const algoliaIndexName = config.ALGOLIA_INDEX_NAME_V2 || config.ALGOLIA_INDEX_NAME;
+  return { algoliaIndexName, searchClient };
 };
 
 const useMarketingSite = () => {

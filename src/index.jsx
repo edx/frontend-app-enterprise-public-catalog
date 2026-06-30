@@ -38,6 +38,7 @@ initialize({
         ALGOLIA_APP_ID: process.env.ALGOLIA_APP_ID || null,
         ALGOLIA_SEARCH_API_KEY: process.env.ALGOLIA_SEARCH_API_KEY || null,
         ALGOLIA_INDEX_NAME: process.env.ALGOLIA_INDEX_NAME || null,
+        ALGOLIA_INDEX_NAME_V2: process.env.ALGOLIA_INDEX_NAME_V2 || null,
         HUBSPOT_MARKETING_URL: process.env.HUBSPOT_MARKETING_URL || null,
         EDX_FOR_SUBSCRIPTION_TITLE: process.env.EDX_FOR_SUBSCRIPTION_TITLE || null,
         EDX_ENTERPRISE_ALACARTE_TITLE:

@@ -1,0 +1,37 @@
+src/index.jsx
+  s_14fcd8a02409c7::t_607c8750e2694b 41
+.env.development
+  s_14fcd8a02409c7::t_01629d619537cf 26
+src/components/catalogPage/CatalogPage.test.jsx
+  s_14fcd8a02409c7::t_1f757a58590341 19
+src/data/services/EnterpriseCatalogAPIService.ts
+  s_14fcd8a02409c7::t_7fe36c1a30a594 7-12
+src/components/catalogs/data/hooks.jsx
+  s_14fcd8a02409c7::t_1fab67993641d5 2-4,10-20,26,31-34,55-57
+src/components/catalogs/CatalogSearch.test.jsx
+  s_14fcd8a02409c7::t_6dfa83a1d1b92a 20
+src/components/catalogs/tests/data/hooks.test.jsx
+  s_14fcd8a02409c7::t_e563591ebe48e2 1,4,7,14,25-26,28-57
+src/components/app/tests/App.test.jsx
+  s_14fcd8a02409c7::t_61c00aab4c3826 25
+src/components/catalogs/CatalogSearch.jsx
+  s_14fcd8a02409c7::t_1f060878c7e56f 132,134
+package-lock.json
+  s_14fcd8a02409c7::t_347ac879d75079 356,2282,2306,2498,3105,3620,3656,3836,3946,4139,4622,4858,5023,5094,5442,5496,5645,5694,6389,6483,6549,7004,7059,7617,9777,9835,9878,10281,10339,10378,10410,14357,18624,19467,19770,19929,20095,20271,20361,20539,21150,22621,22939,23205,23525,23634,23715
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.4",
+  "base_commit_sha": "783c8518ebea849db5dfbcc94beb13001b563341",
+  "prompts": {},
+  "sessions": {
+    "s_14fcd8a02409c7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "06ec8623-73bb-4fab-8643-4fc1c07a18cd",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Alexander Dusenbery <adusenbery@2u.com>"
+    }
+  }
+}

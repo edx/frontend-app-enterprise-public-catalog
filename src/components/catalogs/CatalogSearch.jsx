@@ -26,6 +26,7 @@ import {
   QUERY_TITLE_REFINEMENT,
 } from '../../constants';
 import CatalogSearchResults from '../catalogSearchResults/CatalogSearchResults';
+import NewContentAwareSearchFilters from './NewContentAwareSearchFilters';
 import CatalogInfoModal from '../catalogInfoModal/CatalogInfoModal';
 import {
   mapAlgoliaObjectToProgram,
@@ -290,6 +291,9 @@ const CatalogSearch = () => {
               disableSuggestionRedirect
               suggestionSubmitOverride={suggestedCourseOnClick}
               hideSearchBox={hideSearchBox}
+              filterComponents={features.NEW_CONTENT_FACET && (
+                <NewContentAwareSearchFilters variant="default" />
+              )}
             />
             ) }
           </div>

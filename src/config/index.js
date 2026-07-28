@@ -5,6 +5,7 @@ import {
   FEATURE_EXEC_ED_INCLUSION,
   FEATURE_PROGRAM_TYPE_FACET,
   FEATURE_ENABLE_AI_CURATION,
+  FEATURE_NEW_CONTENT_FACET,
 } from './constants';
 
 const features = {
@@ -22,6 +23,9 @@ const features = {
     || hasFeatureFlagEnabled(FEATURE_CONSOLIDATE_SUBS_CATALOG),
   ENABLE_AI_CURATION: process.env.ENABLE_AI_CURATION === 'true'
   || hasFeatureFlagEnabled(FEATURE_ENABLE_AI_CURATION),
+  NEW_CONTENT_FACET:
+    process.env.FEATURE_NEW_CONTENT_FACET === 'true'
+    || hasFeatureFlagEnabled(FEATURE_NEW_CONTENT_FACET),
 };
 
 export default features;

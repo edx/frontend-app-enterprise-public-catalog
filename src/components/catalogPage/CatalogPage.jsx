@@ -10,11 +10,13 @@ import Subheader from '../subheader/subheader';
 import Hero from '../hero/Hero';
 import messages from './CatalogPage.messages';
 import CatalogSelectionDeck from '../catalogSelectionDeck/CatalogSelectionDeck';
+import features from '../../config';
 import {
   AVAILABILITY_REFINEMENT,
   AVAILABILITY_REFINEMENT_DEFAULTS,
   EXEC_ED_TITLE,
   LEARNING_TYPE_REFINEMENT,
+  NEW_CONTENT_REFINEMENT,
   QUERY_TITLE_REFINEMENT,
   HIDE_CARDS_REFINEMENT,
   TRACKING_APP_NAME,
@@ -29,6 +31,17 @@ if (
   !SEARCH_FACET_FILTERS.some((filter) => filter.attribute === LEARNING_TYPE_REFINEMENT)
 ) {
   SEARCH_FACET_FILTERS.push(learningType);
+}
+
+// Add the "Latest Offerings" facet at the end of the row, gated behind its feature flag.
+const isMissingNewContentRefinement = !SEARCH_FACET_FILTERS.some(
+  (filter) => filter.attribute === NEW_CONTENT_REFINEMENT,
+);
+if (features.NEW_CONTENT_FACET && isMissingNewContentRefinement) {
+  SEARCH_FACET_FILTERS.push({
+    attribute: NEW_CONTENT_REFINEMENT,
+    title: 'Latest Offerings',
+  });
 }
 
 const CatalogPage = () => {

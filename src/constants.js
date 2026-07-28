@@ -22,6 +22,7 @@ export const AVAILABILITY_REFINEMENT_DEFAULTS = [
 export const CONTENT_TYPE_REFINEMENT = 'content_type';
 export const COURSE_TYPE_REFINEMENT = 'course_type';
 export const LEARNING_TYPE_REFINEMENT = 'learning_type';
+export const NEW_CONTENT_REFINEMENT = 'is_new_content';
 
 // Page refinement settings
 export const HIDE_CARDS_REFINEMENT = 'hide_cards';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -6,15 +6,19 @@ import {
 } from '@openedx/paragon';
 import { Check, Close, Download } from '@openedx/paragon/icons';
 import { saveAs } from 'file-saver';
+import { getConfig } from '@edx/frontend-platform';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import EnterpriseCatalogApiService from '../../../../data/services/EnterpriseCatalogAPIService';
+import LeadGenModal from '../../../leadGenModal/LeadGenModal';
+import { markLeadGenFormSubmitted, shouldGateDownload } from '../../../../utils/utmUtils';
 
 const DownloadCsvButton = ({ facets, query }) => {
   const [isOpen, open, close] = useToggle(false);
   const [filters, setFilters] = useState();
   const [buttonState, setButtonState] = useState('default');
   const [shouldUseLearnerPortalLinks, setShouldUseLearnerPortalLinks] = useState(false);
+  const [isLeadGenOpen, setIsLeadGenOpen] = useState(false);
   const handleChange = e => setShouldUseLearnerPortalLinks(e.target.checked);
 
   const intl = useIntl();
@@ -29,7 +33,7 @@ const DownloadCsvButton = ({ facets, query }) => {
     setFilters(filterString.slice(2));
   };
 
-  const handleClick = () => {
+  const startDownload = useCallback(() => {
     formatFilterText(facets);
     open();
     setButtonState('pending');
@@ -44,6 +48,33 @@ const DownloadCsvButton = ({ facets, query }) => {
       saveAs(blob, `Enterprise-Catalog-Export-${timestamp}.xlsx`);
       setButtonState('complete');
     }).catch(() => setButtonState('error'));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [facets, query, shouldUseLearnerPortalLinks, open]);
+
+  const handleClick = () => {
+    if (shouldGateDownload()) {
+      setIsLeadGenOpen(true);
+      return;
+    }
+    startDownload();
+  };
+
+  const handleLeadGenSubmitted = useCallback(() => {
+    markLeadGenFormSubmitted();
+    setIsLeadGenOpen(false);
+    startDownload();
+  }, [startDownload]);
+
+  const handleLeadGenClose = () => {
+    setIsLeadGenOpen(false);
+    // The hosted form cannot yet tell us when it was submitted, so a hard gate would
+    // make the catalog undownloadable for campaign traffic. Until the Pardot page posts
+    // the submit message, closing the form lets the download through. This is knowingly
+    // bypassable; flip FEATURE_LEAD_GEN_SOFT_GATE off once the form reports submits.
+    if (getConfig().FEATURE_LEAD_GEN_SOFT_GATE) {
+      markLeadGenFormSubmitted();
+      startDownload();
+    }
   };
 
   const toastText = intl.formatMessage({
@@ -53,6 +84,13 @@ const DownloadCsvButton = ({ facets, query }) => {
   }, { filters });
   return (
     <>
+      {isLeadGenOpen && (
+        <LeadGenModal
+          isOpen={isLeadGenOpen}
+          onClose={handleLeadGenClose}
+          onSubmitted={handleLeadGenSubmitted}
+        />
+      )}
       {isOpen && (
         <Toast onClose={close} show={isOpen}>
           {toastText}

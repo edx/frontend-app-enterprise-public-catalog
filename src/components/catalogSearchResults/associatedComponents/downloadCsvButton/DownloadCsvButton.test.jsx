@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { saveAs } from 'file-saver';
 
@@ -43,6 +43,15 @@ const badQueryProps = { facets: smallFacets, query: 'math & science' };
 const assignMock = jest.fn();
 delete global.location;
 global.location = { href: assignMock };
+
+let mockSoftGate = true;
+jest.mock('@edx/frontend-platform', () => ({
+  ...jest.requireActual('@edx/frontend-platform'),
+  getConfig: () => ({
+    LEAD_GEN_FORM_URL: 'https://get.business.edx.org/l/1059723/2025-07-22/fr8j4b',
+    FEATURE_LEAD_GEN_SOFT_GATE: mockSoftGate,
+  }),
+}));
 
 describe('Download button', () => {
   beforeEach(() => {
@@ -90,5 +99,112 @@ describe('Download button', () => {
       }),
       `Enterprise-Catalog-Export-${mockTimestamp}.xlsx`,
     );
+  });
+
+  // ENT-10928: campaign traffic sees a lead capture form before the download.
+  describe('lead generation gate', () => {
+    const clickDownload = async () => {
+      const user = userEvent.setup();
+      await user.click(screen.getByText('Download results'));
+    };
+
+    beforeEach(() => {
+      mockSoftGate = true;
+      window.sessionStorage.clear();
+      global.location.search = '';
+    });
+
+    test('downloads directly when there are no campaign params', async () => {
+      renderWithRouter(<DownloadCsvButton {...defaultProps} />);
+      await clickDownload();
+      expect(screen.queryByTitle('Catalog download request form')).not.toBeInTheDocument();
+      expect(mockCatalogApiService).toHaveBeenCalledTimes(1);
+    });
+
+    test('shows the form instead of downloading for campaign traffic', async () => {
+      global.location.search = '?utm_source=wordpress&utm_campaign=b2b';
+      renderWithRouter(<DownloadCsvButton {...defaultProps} />);
+      await clickDownload();
+      expect(screen.getByTitle('Catalog download request form')).toBeInTheDocument();
+      expect(mockCatalogApiService).not.toHaveBeenCalled();
+    });
+
+    test('honours the disable param on the incoming link', async () => {
+      global.location.search = '?utm_source=wordpress&disable_lead_gen=true';
+      renderWithRouter(<DownloadCsvButton {...defaultProps} />);
+      await clickDownload();
+      expect(screen.queryByTitle('Catalog download request form')).not.toBeInTheDocument();
+      expect(mockCatalogApiService).toHaveBeenCalledTimes(1);
+    });
+
+    test('downloads once the form reports a submit', async () => {
+      global.location.search = '?utm_source=wordpress';
+      renderWithRouter(<DownloadCsvButton {...defaultProps} />);
+      await clickDownload();
+      expect(mockCatalogApiService).not.toHaveBeenCalled();
+
+      act(() => {
+        window.dispatchEvent(new MessageEvent('message', {
+          origin: 'https://get.business.edx.org',
+          data: { pardotFormSubmitted: true },
+        }));
+      });
+      expect(mockCatalogApiService).toHaveBeenCalledTimes(1);
+    });
+
+    test('stays gated when a submit message comes from another origin', async () => {
+      global.location.search = '?utm_source=wordpress';
+      renderWithRouter(<DownloadCsvButton {...defaultProps} />);
+      await clickDownload();
+
+      act(() => {
+        window.dispatchEvent(new MessageEvent('message', {
+          origin: 'https://evil.example.com',
+          data: { pardotFormSubmitted: true },
+        }));
+      });
+      expect(mockCatalogApiService).not.toHaveBeenCalled();
+    });
+
+    test('does not re-gate a second download in the same session', async () => {
+      global.location.search = '?utm_source=wordpress';
+      const { unmount } = renderWithRouter(<DownloadCsvButton {...defaultProps} />);
+      await clickDownload();
+      act(() => {
+        window.dispatchEvent(new MessageEvent('message', {
+          origin: 'https://get.business.edx.org',
+          data: { pardotFormSubmitted: true },
+        }));
+      });
+      expect(mockCatalogApiService).toHaveBeenCalledTimes(1);
+      unmount();
+
+      renderWithRouter(<DownloadCsvButton {...defaultProps} />);
+      await clickDownload();
+      expect(screen.queryByTitle('Catalog download request form')).not.toBeInTheDocument();
+      expect(mockCatalogApiService).toHaveBeenCalledTimes(2);
+    });
+
+    test('soft gate lets a dismissed form through', async () => {
+      global.location.search = '?utm_source=wordpress';
+      renderWithRouter(<DownloadCsvButton {...defaultProps} />);
+      await clickDownload();
+      expect(mockCatalogApiService).not.toHaveBeenCalled();
+
+      const user = userEvent.setup();
+      await user.click(screen.getByRole('button', { name: /close/i }));
+      expect(mockCatalogApiService).toHaveBeenCalledTimes(1);
+    });
+
+    test('hard gate holds a dismissed form', async () => {
+      mockSoftGate = false;
+      global.location.search = '?utm_source=wordpress';
+      renderWithRouter(<DownloadCsvButton {...defaultProps} />);
+      await clickDownload();
+
+      const user = userEvent.setup();
+      await user.click(screen.getByRole('button', { name: /close/i }));
+      expect(mockCatalogApiService).not.toHaveBeenCalled();
+    });
   });
 });

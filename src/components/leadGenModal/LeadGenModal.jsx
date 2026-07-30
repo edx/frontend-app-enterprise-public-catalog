@@ -35,7 +35,7 @@ const LeadGenModal = ({ isOpen, onClose, onSubmitted }) => {
   const [height, setHeight] = useState(LEAD_GEN_DEFAULT_HEIGHT);
 
   const formOrigin = getLeadGenFormOrigin(formUrl);
-  const src = buildLeadGenFormUrl(formUrl);
+  const src = formOrigin ? buildLeadGenFormUrl(formUrl) : null;
 
   useEffect(() => {
     if (!isOpen || !formOrigin) {

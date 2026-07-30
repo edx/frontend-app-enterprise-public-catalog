@@ -90,6 +90,8 @@ describe('LeadGenModal', () => {
     mockFormUrl = 'not-a-url';
     const onSubmitted = jest.fn();
     renderWithRouter(<LeadGenModal {...defaultProps} onSubmitted={onSubmitted} />);
+    expect(screen.queryByTitle('Catalog download request form')).not.toBeInTheDocument();
+    expect(screen.getByText(/currently unavailable/i)).toBeInTheDocument();
     postFromOrigin(FORM_ORIGIN, { pardotFormSubmitted: true });
     expect(onSubmitted).not.toHaveBeenCalled();
   });

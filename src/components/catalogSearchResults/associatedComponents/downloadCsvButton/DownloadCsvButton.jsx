@@ -11,7 +11,7 @@ import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import EnterpriseCatalogApiService from '../../../../data/services/EnterpriseCatalogAPIService';
 import LeadGenModal from '../../../leadGenModal/LeadGenModal';
-import { markLeadGenFormSubmitted, shouldGateDownload } from '../../../../utils/utmUtils';
+import { markLeadGenFormSubmitted, shouldGateDownload, getLeadGenFormOrigin } from '../../../../utils/utmUtils';
 
 const DownloadCsvButton = ({ facets, query }) => {
   const [isOpen, open, close] = useToggle(false);
@@ -52,7 +52,8 @@ const DownloadCsvButton = ({ facets, query }) => {
   }, [facets, query, shouldUseLearnerPortalLinks, open]);
 
   const handleClick = () => {
-    if (shouldGateDownload()) {
+    const { LEAD_GEN_FORM_URL } = getConfig();
+    if (shouldGateDownload() && getLeadGenFormOrigin(LEAD_GEN_FORM_URL)) {
       setIsLeadGenOpen(true);
       return;
     }

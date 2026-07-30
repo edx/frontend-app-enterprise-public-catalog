@@ -117,7 +117,7 @@ describe('Download button', () => {
     test('downloads directly when there are no campaign params', async () => {
       renderWithRouter(<DownloadCsvButton {...defaultProps} />);
       await clickDownload();
-      expect(screen.queryByTitle('Catalog download request form')).not.toBeInTheDocument();
+      expect(document.querySelector('iframe')).not.toBeInTheDocument();
       expect(mockCatalogApiService).toHaveBeenCalledTimes(1);
     });
 
@@ -125,7 +125,7 @@ describe('Download button', () => {
       global.location.search = '?utm_source=wordpress&utm_campaign=b2b';
       renderWithRouter(<DownloadCsvButton {...defaultProps} />);
       await clickDownload();
-      expect(screen.getByTitle('Catalog download request form')).toBeInTheDocument();
+      expect(document.querySelector('iframe')).toBeInTheDocument();
       expect(mockCatalogApiService).not.toHaveBeenCalled();
     });
 
@@ -133,7 +133,7 @@ describe('Download button', () => {
       global.location.search = '?utm_source=wordpress&disable_lead_gen=true';
       renderWithRouter(<DownloadCsvButton {...defaultProps} />);
       await clickDownload();
-      expect(screen.queryByTitle('Catalog download request form')).not.toBeInTheDocument();
+      expect(document.querySelector('iframe')).not.toBeInTheDocument();
       expect(mockCatalogApiService).toHaveBeenCalledTimes(1);
     });
 
@@ -181,7 +181,7 @@ describe('Download button', () => {
 
       renderWithRouter(<DownloadCsvButton {...defaultProps} />);
       await clickDownload();
-      expect(screen.queryByTitle('Catalog download request form')).not.toBeInTheDocument();
+      expect(document.querySelector('iframe')).not.toBeInTheDocument();
       expect(mockCatalogApiService).toHaveBeenCalledTimes(2);
     });
 

@@ -40,8 +40,7 @@ initialize({
         ALGOLIA_INDEX_NAME: process.env.ALGOLIA_INDEX_NAME || null,
         ALGOLIA_INDEX_NAME_V2: process.env.ALGOLIA_INDEX_NAME_V2 || null,
         HUBSPOT_MARKETING_URL: process.env.HUBSPOT_MARKETING_URL || null,
-        // Hosted Pardot lead capture form shown before the catalog download (ENT-10928).
-        // Pardot asset paths are dated, so marketing rotates this URL -- keep it in config.
+        // Pardot asset paths are dated, so marketing rotates this URL periodically.
         LEAD_GEN_FORM_URL: process.env.LEAD_GEN_FORM_URL || null,
         FEATURE_LEAD_GEN_SOFT_GATE:
           process.env.FEATURE_LEAD_GEN_SOFT_GATE !== 'false',

@@ -23,18 +23,14 @@ const DownloadCsvButton = ({ facets, query }) => {
 
   const intl = useIntl();
 
-  const formatFilterText = (filterObject) => {
+  const startDownload = useCallback(() => {
     let filterString = '';
-    Object.keys(filterObject).forEach((key) => {
-      const currentFilters = [...filterObject[key]];
+    Object.keys(facets).forEach((key) => {
+      const currentFilters = [...facets[key]];
       currentFilters.unshift(filterString);
       filterString = currentFilters.join(', ');
     });
     setFilters(filterString.slice(2));
-  };
-
-  const startDownload = useCallback(() => {
-    formatFilterText(facets);
     open();
     setButtonState('pending');
     EnterpriseCatalogApiService.generateCsvDownloadLink(
@@ -48,7 +44,6 @@ const DownloadCsvButton = ({ facets, query }) => {
       saveAs(blob, `Enterprise-Catalog-Export-${timestamp}.xlsx`);
       setButtonState('complete');
     }).catch(() => setButtonState('error'));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [facets, query, shouldUseLearnerPortalLinks, open]);
 
   const handleClick = () => {
@@ -68,10 +63,8 @@ const DownloadCsvButton = ({ facets, query }) => {
 
   const handleLeadGenClose = () => {
     setIsLeadGenOpen(false);
-    // The hosted form cannot yet tell us when it was submitted, so a hard gate would
-    // make the catalog undownloadable for campaign traffic. Until the Pardot page posts
-    // the submit message, closing the form lets the download through. This is knowingly
-    // bypassable; flip FEATURE_LEAD_GEN_SOFT_GATE off once the form reports submits.
+    // Soft gate: the form doesn't post a submit message yet, so closing it lets the
+    // download through anyway. Flip FEATURE_LEAD_GEN_SOFT_GATE off once it does.
     if (getConfig().FEATURE_LEAD_GEN_SOFT_GATE) {
       markLeadGenFormSubmitted();
       startDownload();

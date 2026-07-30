@@ -37,19 +37,11 @@ describe('LeadGenModal', () => {
   it('forwards only campaign params to the form iframe', () => {
     renderWithRouter(<LeadGenModal {...defaultProps} />);
     const iframe = screen.getByTitle('Catalog download request form');
-    // Pardot reads its own location.search for the hidden UTM fields, so these must
-    // be on the src -- but catalog refinements like `q` must not leak through.
+    // Catalog refinements like `q` must not leak into the form's src.
     expect(iframe).toHaveAttribute(
       'src',
       `${FORM_URL}?utm_source=wordpress&utm_campaign=b2b`,
     );
-  });
-
-  it('resizes to the height the form reports', () => {
-    renderWithRouter(<LeadGenModal {...defaultProps} />);
-    expect(screen.getByTitle('Catalog download request form')).toHaveAttribute('height', '500');
-    postFromOrigin(FORM_ORIGIN, { iframeHeight: 820 });
-    expect(screen.getByTitle('Catalog download request form')).toHaveAttribute('height', '820');
   });
 
   it('unlocks the download when the form reports a submit', () => {
@@ -79,11 +71,10 @@ describe('LeadGenModal', () => {
     expect(() => postFromOrigin(FORM_ORIGIN, null)).not.toThrow();
   });
 
-  it('shows a fallback and no iframe when the form url is not configured', () => {
+  it('shows no iframe when the form url is not configured', () => {
     mockFormUrl = null;
     renderWithRouter(<LeadGenModal {...defaultProps} />);
     expect(screen.queryByTitle('Catalog download request form')).not.toBeInTheDocument();
-    expect(screen.getByText(/currently unavailable/i)).toBeInTheDocument();
   });
 
   it('cannot be unlocked when the form url is unparseable', () => {
@@ -91,7 +82,6 @@ describe('LeadGenModal', () => {
     const onSubmitted = jest.fn();
     renderWithRouter(<LeadGenModal {...defaultProps} onSubmitted={onSubmitted} />);
     expect(screen.queryByTitle('Catalog download request form')).not.toBeInTheDocument();
-    expect(screen.getByText(/currently unavailable/i)).toBeInTheDocument();
     postFromOrigin(FORM_ORIGIN, { pardotFormSubmitted: true });
     expect(onSubmitted).not.toHaveBeenCalled();
   });

@@ -50,9 +50,7 @@ export const EDX_COURSE_TITLE_DESC = 'Self paced online learning from world-clas
 export const TWOU_EXEC_ED_TITLE_DESC = 'Immersive, instructor led online short courses designed to develop interpersonal, analytical, and critical thinking skills.';
 export const PROGRAM_TITLE_DESC = 'Multi-course bundled learning for skills mastery and to earn credentials such as Professional Certificates, MicroBachelors™, MicroMasters®, and Master’s Degrees.';
 
-// Lead generation form (ENT-10928)
-// The popup is opt-in: it only gates the catalog download for visitors who arrived
-// with campaign tracking, and `LEAD_GEN_DISABLE_PARAM` opts a link back out.
+// Lead generation form
 export const UTM_PARAM_KEYS = [
   'utm_source',
   'utm_medium',
@@ -62,12 +60,7 @@ export const UTM_PARAM_KEYS = [
 ];
 export const LEAD_GEN_DISABLE_PARAM = 'disable_lead_gen';
 export const LEAD_GEN_SUBMITTED_STORAGE_KEY = 'exploreCatalogLeadGenSubmitted';
-// Message the hosted form posts to us on successful submit. The form does not send
-// this yet -- see LeadGenModal for the contract the Pardot page needs to implement.
 export const LEAD_GEN_SUBMIT_MESSAGE_KEY = 'pardotFormSubmitted';
-// Message the hosted form already posts on load and on every field change.
-export const LEAD_GEN_HEIGHT_MESSAGE_KEY = 'iframeHeight';
-export const LEAD_GEN_DEFAULT_HEIGHT = 500;
 
 // Ask Xpert
 export const XPERT_RESULT_STATUSES = ['IN_PROGRESS', 'PENDING', 'STARTED', 'FAILURE'];

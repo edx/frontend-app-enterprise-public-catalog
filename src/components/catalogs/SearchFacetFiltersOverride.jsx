@@ -1,14 +1,13 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { FacetListRefinement, SearchContext } from '@2uinc/frontend-enterprise-catalog-search';
 import { NEW_CONTENT_REFINEMENT } from '../../constants';
+import features from '../../config';
 
 const TRUE_VALUE = 'true';
 const sortItemsByLabelAsc = (items) => [...items].sort((a, b) => a.label.localeCompare(b.label));
 
-// Label stays `true` (not renamed) since FacetListBase dispatches item.label as the
-// refinement value — renaming it would break the match against Algolia's is_new_content.
-// messages.js maps it to "Recently added" for display.
+// Label stays `true` (not renamed) — FacetListBase dispatches it as the refinement value.
 const newContentTransform = (items) => items.filter(({ label }) => label === TRUE_VALUE);
 
 const getTransformItems = ({ attribute, isSortedAlphabetical }) => {
@@ -21,11 +20,24 @@ const getTransformItems = ({ attribute, isSortedAlphabetical }) => {
   return (items) => items;
 };
 
-// Same as the shared package's SearchFilters, but collapses is_new_content to just the true row.
-const NewContentAwareSearchFilters = ({ variant }) => {
+// Drops is_new_content when its flag is off; every other facet passes through.
+const filterFacetItems = ({ attribute }) => {
+  if (attribute === NEW_CONTENT_REFINEMENT && !features.NEW_CONTENT_FACET) {
+    return false;
+  }
+  return true;
+};
+
+// Like the shared package's SearchFilters, but collapses is_new_content to its true row.
+const SearchFacetFiltersOverride = ({ variant }) => {
   const { refinements, searchFacetFilters } = useContext(SearchContext);
 
-  return searchFacetFilters.map(({
+  const updatedFacetFilter = useMemo(
+    () => searchFacetFilters.filter(filterFacetItems),
+    [searchFacetFilters],
+  );
+
+  return useMemo(() => updatedFacetFilter.map(({
     title, attribute, isSortedAlphabetical, typeaheadOptions, noDisplay,
   }) => (
     <FacetListRefinement
@@ -42,15 +54,15 @@ const NewContentAwareSearchFilters = ({ variant }) => {
       variant={variant}
       noDisplay={noDisplay}
     />
-  ));
+  )), [updatedFacetFilter, refinements, variant]);
 };
 
-NewContentAwareSearchFilters.propTypes = {
+SearchFacetFiltersOverride.propTypes = {
   variant: PropTypes.string,
 };
 
-NewContentAwareSearchFilters.defaultProps = {
+SearchFacetFiltersOverride.defaultProps = {
   variant: 'inverse',
 };
 
-export default NewContentAwareSearchFilters;
+export default SearchFacetFiltersOverride;

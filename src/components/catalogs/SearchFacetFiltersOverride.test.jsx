@@ -1,7 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import { SearchContext } from '@2uinc/frontend-enterprise-catalog-search';
 import '@testing-library/jest-dom/extend-expect';
-import NewContentAwareSearchFilters from './NewContentAwareSearchFilters';
+import SearchFacetFiltersOverride from './SearchFacetFiltersOverride';
+import mockFeatures from '../../config';
+
+jest.mock('../../config', () => ({
+  __esModule: true,
+  default: { NEW_CONTENT_FACET: false },
+}));
 
 const capturedTransforms = {};
 
@@ -31,13 +37,14 @@ const baseFacets = [
 
 const renderWithContext = (searchFacetFilters, refinements = {}) => render(
   <SearchContext.Provider value={{ refinements, searchFacetFilters }}>
-    <NewContentAwareSearchFilters />
+    <SearchFacetFiltersOverride />
   </SearchContext.Provider>,
 );
 
-describe('NewContentAwareSearchFilters', () => {
+describe('SearchFacetFiltersOverride', () => {
   beforeEach(() => {
     Object.keys(capturedTransforms).forEach((key) => delete capturedTransforms[key]);
+    mockFeatures.NEW_CONTENT_FACET = false;
   });
 
   it('renders one cell per facet from SearchContext', () => {
@@ -54,6 +61,7 @@ describe('NewContentAwareSearchFilters', () => {
   });
 
   it('transformItems for is_new_content keeps only the true row with original label preserved', () => {
+    mockFeatures.NEW_CONTENT_FACET = true;
     const facets = [
       { attribute: 'is_new_content', title: 'Latest Offerings' },
     ];
@@ -68,12 +76,31 @@ describe('NewContentAwareSearchFilters', () => {
     ]);
   });
 
-  it('renders is_new_content facet alongside other facets', () => {
+  it('renders is_new_content facet alongside other facets when the flag is on', () => {
+    mockFeatures.NEW_CONTENT_FACET = true;
     const facets = [
       ...baseFacets,
       { attribute: 'is_new_content', title: 'Latest Offerings' },
     ];
     renderWithContext(facets);
     expect(screen.getByTestId('facet-is_new_content')).toBeInTheDocument();
+  });
+
+  it('omits the is_new_content facet entirely when the flag is off', () => {
+    mockFeatures.NEW_CONTENT_FACET = false;
+    const facets = [
+      ...baseFacets,
+      { attribute: 'is_new_content', title: 'Latest Offerings' },
+    ];
+    renderWithContext(facets);
+    expect(screen.getByTestId('facet-skill_names')).toBeInTheDocument();
+    expect(screen.queryByTestId('facet-is_new_content')).not.toBeInTheDocument();
+  });
+
+  it('still renders unrelated facets when the flag is off', () => {
+    mockFeatures.NEW_CONTENT_FACET = false;
+    renderWithContext(baseFacets);
+    expect(screen.getByTestId('facet-skill_names')).toBeInTheDocument();
+    expect(screen.getByTestId('facet-partners.name')).toBeInTheDocument();
   });
 });

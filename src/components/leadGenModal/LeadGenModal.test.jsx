@@ -44,6 +44,17 @@ describe('LeadGenModal', () => {
     );
   });
 
+  it('matches the iframe markup provided by marketing', () => {
+    renderWithRouter(<LeadGenModal {...defaultProps} />);
+    const iframe = screen.getByTitle('Catalog download request form');
+    expect(iframe).toHaveAttribute('width', '100%');
+    expect(iframe).toHaveAttribute('height', '500');
+    expect(iframe).toHaveAttribute('type', 'text/html');
+    expect(iframe).toHaveAttribute('frameBorder', '0');
+    expect(iframe).toHaveAttribute('allowTransparency', 'true');
+    expect(iframe).toHaveStyle({ border: '0' });
+  });
+
   it('unlocks the download when the form reports a submit', () => {
     const onSubmitted = jest.fn();
     renderWithRouter(<LeadGenModal {...defaultProps} onSubmitted={onSubmitted} />);

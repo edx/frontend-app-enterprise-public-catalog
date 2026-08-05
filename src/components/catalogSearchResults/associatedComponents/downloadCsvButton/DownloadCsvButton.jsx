@@ -63,12 +63,6 @@ const DownloadCsvButton = ({ facets, query }) => {
 
   const handleLeadGenClose = () => {
     setIsLeadGenOpen(false);
-    // Soft gate: the form doesn't post a submit message yet, so closing it lets the
-    // download through anyway. Flip FEATURE_LEAD_GEN_SOFT_GATE off once it does.
-    if (getConfig().FEATURE_LEAD_GEN_SOFT_GATE) {
-      markLeadGenFormSubmitted();
-      startDownload();
-    }
   };
 
   const toastText = intl.formatMessage({

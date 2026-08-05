@@ -42,8 +42,6 @@ initialize({
         HUBSPOT_MARKETING_URL: process.env.HUBSPOT_MARKETING_URL || null,
         // Pardot asset paths are dated, so marketing rotates this URL periodically.
         LEAD_GEN_FORM_URL: process.env.LEAD_GEN_FORM_URL || null,
-        FEATURE_LEAD_GEN_SOFT_GATE:
-          process.env.FEATURE_LEAD_GEN_SOFT_GATE !== 'false',
         EDX_FOR_SUBSCRIPTION_TITLE: process.env.EDX_FOR_SUBSCRIPTION_TITLE || null,
         EDX_ENTERPRISE_ALACARTE_TITLE:
           process.env.EDX_ENTERPRISE_ALACARTE_TITLE || null,

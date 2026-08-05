@@ -35,11 +35,12 @@ const LeadGenModal = ({ isOpen, onClose, onSubmitted }) => {
       isOpen={isOpen}
       onClose={onClose}
       size="lg"
-      hasCloseButton
+      hasCloseButton={false}
       isFullscreenOnMobile
+      isOverflowVisible
       className="lead-gen-modal"
     >
-      <ModalDialog.Body className="p-0">
+      <ModalDialog.Body>
         {src && (
           <iframe
             title="Catalog download request form"
@@ -48,6 +49,8 @@ const LeadGenModal = ({ isOpen, onClose, onSubmitted }) => {
             height="500"
             type="text/html"
             frameBorder="0"
+            // eslint-disable-next-line react/no-unknown-property -- matches marketing's iframe embed markup
+            allowTransparency="true"
             style={{ border: 0 }}
           />
         )}

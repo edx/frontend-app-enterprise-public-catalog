@@ -44,12 +44,10 @@ const assignMock = jest.fn();
 delete global.location;
 global.location = { href: assignMock };
 
-let mockSoftGate = true;
 jest.mock('@edx/frontend-platform', () => ({
   ...jest.requireActual('@edx/frontend-platform'),
   getConfig: () => ({
     LEAD_GEN_FORM_URL: 'https://get.business.edx.org/l/1059723/2025-07-22/fr8j4b',
-    FEATURE_LEAD_GEN_SOFT_GATE: mockSoftGate,
   }),
 }));
 
@@ -109,7 +107,6 @@ describe('Download button', () => {
     };
 
     beforeEach(() => {
-      mockSoftGate = true;
       window.sessionStorage.clear();
       global.location.search = '';
     });
@@ -185,25 +182,14 @@ describe('Download button', () => {
       expect(mockCatalogApiService).toHaveBeenCalledTimes(2);
     });
 
-    test('soft gate lets a dismissed form through', async () => {
-      global.location.search = '?utm_source=wordpress';
-      renderWithRouter(<DownloadCsvButton {...defaultProps} />);
-      await clickDownload();
-      expect(mockCatalogApiService).not.toHaveBeenCalled();
-
-      const user = userEvent.setup();
-      await user.click(screen.getByRole('button', { name: /close/i }));
-      expect(mockCatalogApiService).toHaveBeenCalledTimes(1);
-    });
-
-    test('hard gate holds a dismissed form', async () => {
-      mockSoftGate = false;
+    test('does not download when the form is dismissed without submitting', async () => {
       global.location.search = '?utm_source=wordpress';
       renderWithRouter(<DownloadCsvButton {...defaultProps} />);
       await clickDownload();
 
+      // There's no close button per the ticket's spec; dismiss via the backdrop instead.
       const user = userEvent.setup();
-      await user.click(screen.getByRole('button', { name: /close/i }));
+      await user.click(screen.getByTestId('modal-backdrop'));
       expect(mockCatalogApiService).not.toHaveBeenCalled();
     });
   });

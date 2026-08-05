@@ -36,6 +36,18 @@ describe('utmUtils', () => {
     it('preserves repeated values', () => {
       expect(getUtmParams('?utm_term=a&utm_term=b').toString()).toEqual('utm_term=a&utm_term=b');
     });
+
+    // Regression guard: "Clear all" filters rebuilds the url from the search
+    // library's own state and drops any param it doesn't recognize, utm keys included.
+    it('falls back to the last seen params once the url loses them', () => {
+      getUtmParams('?utm_source=wordpress');
+      expect(getUtmParams('?availability=Upcoming').toString()).toEqual('utm_source=wordpress');
+    });
+
+    it('prefers live params over stored ones when both are present', () => {
+      getUtmParams('?utm_source=wordpress');
+      expect(getUtmParams('?utm_source=email').toString()).toEqual('utm_source=email');
+    });
   });
 
   describe('hasUtmParams', () => {
@@ -48,6 +60,11 @@ describe('utmUtils', () => {
       ['?utm_source=', false],
     ])('returns %p -> %p', (search, expected) => {
       expect(hasUtmParams(search)).toBe(expected);
+    });
+
+    it('stays true for the rest of the session once utm params are seen', () => {
+      expect(hasUtmParams('?utm_source=wordpress')).toBe(true);
+      expect(hasUtmParams('')).toBe(true);
     });
   });
 
@@ -77,6 +94,11 @@ describe('utmUtils', () => {
       markLeadGenFormSubmitted();
       expect(hasSubmittedLeadGenForm()).toBe(true);
       expect(shouldGateDownload('?utm_source=wordpress')).toBe(false);
+    });
+
+    it('keeps gating after the url loses its utm params this session', () => {
+      expect(shouldGateDownload('?utm_source=wordpress')).toBe(true);
+      expect(shouldGateDownload('')).toBe(true);
     });
   });
 
@@ -113,6 +135,11 @@ describe('utmUtils', () => {
 
     it('returns null for a missing url', () => {
       expect(buildLeadGenFormUrl(null, '?utm_source=wp')).toBeNull();
+    });
+
+    it('keeps forwarding the first-seen utm params after the url loses them', () => {
+      getUtmParams('?utm_source=wordpress');
+      expect(buildLeadGenFormUrl(FORM_URL, '')).toEqual(`${FORM_URL}?utm_source=wordpress`);
     });
   });
 

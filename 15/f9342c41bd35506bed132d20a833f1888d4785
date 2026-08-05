@@ -1,0 +1,21 @@
+src/components/catalogPage/CatalogPage.jsx
+  s_f4dbd1e9ac40c7::t_8493f287ca5d90 54
+src/components/catalogPage/CatalogPage.test.jsx
+  s_f4dbd1e9ac40c7::t_863616472b0d70 118
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "15f9342c41bd35506bed132d20a833f1888d4785",
+  "prompts": {},
+  "sessions": {
+    "s_f4dbd1e9ac40c7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "92a7450e-86c7-465c-baa7-951dce536fbe",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Srija Indukuri <ssrijaindukuri-sonata@2u.com>"
+    }
+  }
+}

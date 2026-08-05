@@ -51,12 +51,9 @@ const CatalogPage = () => {
   const location = useLocation();
   const config = getConfig();
 
-  // Capture campaign UTM params as soon as the page loads, before the search library's
-  // own URL sync can rewrite the address bar and drop params it doesn't recognize.
-  // Waiting until the visitor clicks download is too late if they filter results first.
+  // Capture utm params on load, before filtering can rewrite the url and drop them.
   useEffect(() => {
     getUtmParams();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Default routing:

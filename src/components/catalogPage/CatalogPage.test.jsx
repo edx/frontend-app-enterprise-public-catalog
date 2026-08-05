@@ -105,9 +105,6 @@ describe('CatalogPage', () => {
     );
   });
   it('captures campaign utm params on load so they survive later filter interactions', () => {
-    // Regression guard for ENT-10928: reading utm params lazily (only when the visitor
-    // clicks download) is too late once the search library has rewritten the url from
-    // its own filter state and dropped params it doesn't recognize.
     const location = {
       ...window.location,
       search: '?utm_source=wordpress',
@@ -118,7 +115,7 @@ describe('CatalogPage', () => {
     });
     useLocation.mockReturnValue({ search: '?utm_source=wordpress' });
     renderWithRouter(<CatalogPage />);
-    // Simulate the search library later rewriting the url to drop the utm param.
+    // '' simulates the url losing utm_source after a filter change.
     expect(hasUtmParams('')).toBe(true);
   });
 });

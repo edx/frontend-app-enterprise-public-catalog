@@ -1,0 +1,32 @@
+src/utils/catalogUtils.test.js
+  s_d161cd4f0b7fca::t_3308920eca4c07 2-4,26-67
+src/components/catalogModalBanner/CatalogCourseModalBanner.jsx
+  s_d161cd4f0b7fca::t_07926a99d8a6ec 10
+src/components/catalogSearchResults/CatalogSearchResults.test.jsx
+  s_d161cd4f0b7fca::t_9bf7b51cf8c4ea 3
+  s_d161cd4f0b7fca::t_2e57a2fd866dc8 468-473
+src/components/courseCard/CourseCard.jsx
+  s_d161cd4f0b7fca::t_f7b78c2ed966ca 5-6,10-11,28-31
+  s_d161cd4f0b7fca::t_32aea3a921ed53 56-64
+src/utils/catalogUtils.ts
+  s_d161cd4f0b7fca::t_5a576bc0bd01aa 28-64
+  s_d161cd4f0b7fca::t_ecc32b17b2f19f 100
+src/components/courseCard/CourseCard.test.jsx
+  s_d161cd4f0b7fca::t_30c7bcf2621669 117,119,133-136
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "733907e1992e80adea88f6e6a2ea68d52e8cd077",
+  "prompts": {},
+  "sessions": {
+    "s_d161cd4f0b7fca": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "be0094d0-e66d-4211-ad0f-f58ee3974fbf",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "vivekSonata <vpiridi-sonata@2u.com>"
+    }
+  }
+}

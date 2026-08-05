@@ -1,0 +1,30 @@
+src/utils/catalogUtils.ts
+  s_eeafde3556b64f::t_37518853c8c236 16,30-32,35,42,61
+src/utils/catalogUtils.test.js
+  s_eeafde3556b64f::t_26099255179c1c 67-74
+src/components/courseCard/CourseCard.jsx
+  s_eeafde3556b64f::t_86f9a06f595029 57-62
+src/components/courseCard/CourseCard.test.jsx
+  s_eeafde3556b64f::t_d55e738ac66c7d 138-154
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "54de4c57b49a5e97a6428e339263ce9d1fdc3cd3",
+  "prompts": {},
+  "humans": {
+    "h_ec7bba5198894d": {
+      "author": "vivekSonata <vpiridi-sonata@2u.com>"
+    }
+  },
+  "sessions": {
+    "s_eeafde3556b64f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6f59475-2936-4785-9a78-9bc7de44b6b2",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "vivekSonata <vpiridi-sonata@2u.com>"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+.env.development
+  s_14fcd8a02409c7::t_01629d619537cf 26
+src/components/catalogs/data/hooks.jsx
+  s_14fcd8a02409c7::t_17e64ccacbbd56 17
+  s_14fcd8a02409c7::t_1fab67993641d5 18
+src/index.jsx
+  s_14fcd8a02409c7::t_607c8750e2694b 41
+package-lock.json
+  s_14fcd8a02409c7::t_347ac879d75079 356,2282,2306,2498,3105,3620,3656,3836,3946,4139,4622,4858,5023,5094,5442,5496,5645,5694,6389,6483,6549,7004,7059,7617,9777,9835,9878,10281,10339,10378,10410,14357,18624,19467,19770,19929,20095,20271,20361,20539,21150,22621,22939,23205,23525,23634,23715
+src/components/catalogs/tests/data/hooks.test.jsx
+  s_14fcd8a02409c7::t_e563591ebe48e2 6,18,20,27-28,30-32,39-40,42-43
+  s_14fcd8a02409c7::t_c1c6271689baa1 13,16-17,21-26,29,33-38,41,47
+src/components/catalogs/CatalogSearch.jsx
+  s_14fcd8a02409c7::t_1f060878c7e56f 132,134
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.4",
+  "base_commit_sha": "7e2b7db25723e58825fc86e826804291d3a53d83",
+  "prompts": {},
+  "sessions": {
+    "s_14fcd8a02409c7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "06ec8623-73bb-4fab-8643-4fc1c07a18cd",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": null
+    }
+  }
+}

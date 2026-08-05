@@ -1,0 +1,26 @@
+src/components/catalogModalBanner/CatalogCourseModalBanner.jsx
+  s_d161cd4f0b7fca::t_854f62d922f88e 21-31,36
+src/components/catalogModalBanner/CatalogCourseModalBanner.test.jsx
+  s_d161cd4f0b7fca::t_b70018b7b1de48 1-45,49-50
+  s_d161cd4f0b7fca::t_80fc7a1acdd171 46-48
+src/components/catalogSearchResults/CatalogSearchResults.test.jsx
+  s_d161cd4f0b7fca::t_08a3cab0cb9715 448-450,468-470
+src/components/catalogInfoModal/CatalogInfoModal.test.jsx
+  s_d161cd4f0b7fca::t_f61b9997a864be 91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "2ec0bd73075855f040bdfe11434f74916adfbc5c",
+  "prompts": {},
+  "sessions": {
+    "s_d161cd4f0b7fca": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "be0094d0-e66d-4211-ad0f-f58ee3974fbf",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "vivekSonata <vpiridi-sonata@2u.com>"
+    }
+  }
+}

@@ -7,6 +7,7 @@ import CatalogPage from './CatalogPage';
 import selectionCardMessage from '../catalogSelectionDeck/CatalogSelectionDeck.messages';
 import { LEARNING_TYPE_REFINEMENT } from '../../constants';
 import features from '../../config';
+import { hasUtmParams } from '../../utils/utmUtils';
 
 // all we are testing is routes, we don't need InstantSearch to work here
 jest.mock('react-instantsearch-dom', () => ({
@@ -44,6 +45,7 @@ describe('CatalogPage', () => {
   beforeEach(() => {
     jest.resetModules(); // Most important - it clears the cache
     process.env = { ...OLD_ENV }; // Make a copy
+    window.sessionStorage.clear();
   });
   afterAll(() => {
     process.env = OLD_ENV; // Restore old environment
@@ -101,5 +103,22 @@ describe('CatalogPage', () => {
     expect(window.location.search).toEqual(
       `enterprise_catalog_query_titles=foobar&${LEARNING_TYPE_REFINEMENT}=ayylmao&availability=Available+Now&availability=Starting+Soon&availability=Upcoming`,
     );
+  });
+  it('captures campaign utm params on load so they survive later filter interactions', () => {
+    // Regression guard for ENT-10928: reading utm params lazily (only when the visitor
+    // clicks download) is too late once the search library has rewritten the url from
+    // its own filter state and dropped params it doesn't recognize.
+    const location = {
+      ...window.location,
+      search: '?utm_source=wordpress',
+    };
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: location,
+    });
+    useLocation.mockReturnValue({ search: '?utm_source=wordpress' });
+    renderWithRouter(<CatalogPage />);
+    // Simulate the search library later rewriting the url to drop the utm param.
+    expect(hasUtmParams('')).toBe(true);
   });
 });

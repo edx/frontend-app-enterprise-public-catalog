@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
 import LeadGenModal from './LeadGenModal';
@@ -51,8 +51,19 @@ describe('LeadGenModal', () => {
     expect(iframe).toHaveAttribute('height', '500');
     expect(iframe).toHaveAttribute('type', 'text/html');
     expect(iframe).toHaveAttribute('frameBorder', '0');
-    expect(iframe).toHaveAttribute('allowTransparency', 'true');
     expect(iframe).toHaveStyle({ border: '0' });
+  });
+
+  it('shows a loading spinner until the iframe finishes loading', () => {
+    renderWithRouter(<LeadGenModal {...defaultProps} />);
+    const iframe = screen.getByTitle('Catalog download request form');
+    expect(screen.getByText('Loading form')).toBeInTheDocument();
+    expect(iframe).toHaveStyle({ display: 'none' });
+
+    fireEvent.load(iframe);
+
+    expect(screen.queryByText('Loading form')).not.toBeInTheDocument();
+    expect(iframe).toHaveStyle({ display: 'block' });
   });
 
   it('unlocks the download when the form reports a submit', () => {

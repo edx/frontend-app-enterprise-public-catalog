@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   SearchData,
@@ -11,6 +12,7 @@ import Hero from '../hero/Hero';
 import messages from './CatalogPage.messages';
 import CatalogSelectionDeck from '../catalogSelectionDeck/CatalogSelectionDeck';
 import features from '../../config';
+import { getUtmParams } from '../../utils/utmUtils';
 import {
   AVAILABILITY_REFINEMENT,
   AVAILABILITY_REFINEMENT_DEFAULTS,
@@ -48,6 +50,15 @@ const CatalogPage = () => {
   const intl = useIntl();
   const location = useLocation();
   const config = getConfig();
+
+  // Capture campaign UTM params as soon as the page loads, before the search library's
+  // own URL sync can rewrite the address bar and drop params it doesn't recognize.
+  // Waiting until the visitor clicks download is too late if they filter results first.
+  useEffect(() => {
+    getUtmParams();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Default routing:
   //   1. If our url on load does not have a catalog parameter set, set one.
   //   2. If our url on load does not have an availability param set, set to available and

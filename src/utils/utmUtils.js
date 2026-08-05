@@ -5,8 +5,7 @@ import {
   UTM_PARAM_KEYS,
 } from '../constants';
 
-// sessionStorage can throw in private browsing and is absent in some test
-// environments, so these degrade to a no-op rather than blowing up.
+// sessionStorage can be unavailable (private browsing, some test envs); degrade to a no-op.
 function getStoredUtmParams() {
   try {
     return window.sessionStorage.getItem(LEAD_GEN_UTM_STORAGE_KEY) || '';
@@ -19,16 +18,12 @@ function storeUtmParams(search) {
   try {
     window.sessionStorage.setItem(LEAD_GEN_UTM_STORAGE_KEY, search);
   } catch (e) {
-    // Non-fatal: falls back to whatever is currently in the URL.
+    // ignore
   }
 }
 
-// Narrower than window.location.search: that also carries catalog refinements
-// (enterprise_catalog_query_titles, availability, q) that must not leak through.
-//
-// Falls back to the first UTM params seen this session when the live URL has none:
-// the search library rebuilds the URL from its own filter state (e.g. on "Clear
-// all"), which drops any param it doesn't recognize, UTM keys included.
+// Extracts only UTM_PARAM_KEYS (not catalog filters), falling back to the last-seen
+// values once the search library rewrites the url and drops params it doesn't recognize.
 export function getUtmParams(search = window.location.search) {
   const currentParams = new URLSearchParams(search);
   const utmParams = new URLSearchParams();
@@ -54,8 +49,6 @@ export function isLeadGenDisabled(search = window.location.search) {
   return new URLSearchParams(search).get(LEAD_GEN_DISABLE_PARAM) === 'true';
 }
 
-// sessionStorage can throw in private browsing and is absent in some test
-// environments, so this degrades to "not submitted" rather than blowing up.
 export function hasSubmittedLeadGenForm() {
   try {
     return window.sessionStorage.getItem(LEAD_GEN_SUBMITTED_STORAGE_KEY) === 'true';
@@ -68,7 +61,7 @@ export function markLeadGenFormSubmitted() {
   try {
     window.sessionStorage.setItem(LEAD_GEN_SUBMITTED_STORAGE_KEY, 'true');
   } catch (e) {
-    // Non-fatal: the visitor is simply re-prompted on their next download.
+    // ignore
   }
 }
 
@@ -78,8 +71,7 @@ export function shouldGateDownload(search = window.location.search) {
     && !hasSubmittedLeadGenForm();
 }
 
-// The Pardot page populates its hidden UTM fields from its own location.search,
-// so without this the form submits blank attribution.
+// Forwards UTM params so Pardot's hidden fields aren't submitted blank.
 export function buildLeadGenFormUrl(formUrl, search = window.location.search) {
   if (!formUrl) {
     return null;

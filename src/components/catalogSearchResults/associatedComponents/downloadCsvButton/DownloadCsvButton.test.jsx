@@ -99,7 +99,6 @@ describe('Download button', () => {
     );
   });
 
-  // ENT-10928: campaign traffic sees a lead capture form before the download.
   describe('lead generation gate', () => {
     const clickDownload = async () => {
       const user = userEvent.setup();

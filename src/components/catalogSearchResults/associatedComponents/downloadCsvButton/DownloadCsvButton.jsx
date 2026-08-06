@@ -26,9 +26,11 @@ const DownloadCsvButton = ({ facets, query }) => {
   const startDownload = useCallback(() => {
     let filterString = '';
     Object.keys(facets).forEach((key) => {
-      const currentFilters = [...facets[key]];
-      currentFilters.unshift(filterString);
-      filterString = currentFilters.join(', ');
+      const values = facets[key];
+      if (!Array.isArray(values) || !values.length) {
+        return;
+      }
+      filterString = [filterString, ...values].join(', ');
     });
     setFilters(filterString.slice(2));
     open();

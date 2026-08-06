@@ -70,6 +70,14 @@ describe('Download button', () => {
     await user.click(input);
     expect(mockCatalogApiService).toHaveBeenCalledWith(facets, 'foo');
   });
+  test('does not crash when facets falls back to its non-array default', async () => {
+    renderWithRouter(<DownloadCsvButton />);
+    const input = screen.getByText('Download results');
+    const user = userEvent.setup();
+    await expect(user.click(input)).resolves.not.toThrow();
+    expect(mockCatalogApiService).toHaveBeenCalledWith({ nbHits: 0, hits: [] }, null);
+  });
+
   test('download button url encodes queries', async () => {
     process.env.CATALOG_SERVICE_BASE_URL = 'foobar.com';
     const mockResponse = {

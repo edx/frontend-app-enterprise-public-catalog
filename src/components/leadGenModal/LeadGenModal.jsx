@@ -49,7 +49,7 @@ const LeadGenModal = ({ isOpen, onClose, onSubmitted }) => {
         {src && (
           <>
             {!isIframeLoaded && (
-              <div className="d-flex justify-content-center align-items-center" style={{ height: 500 }}>
+              <div className="d-flex justify-content-center align-items-center" style={{ height: 530 }}>
                 <Spinner animation="border" screenReaderText="Loading form" />
               </div>
             )}

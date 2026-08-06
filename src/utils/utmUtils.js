@@ -1,11 +1,13 @@
 import {
   LEAD_GEN_DISABLE_PARAM,
+  LEAD_GEN_DISABLE_STORAGE_KEY,
+  LEAD_GEN_GATE_UTM_SOURCE,
   LEAD_GEN_SUBMITTED_STORAGE_KEY,
   LEAD_GEN_UTM_STORAGE_KEY,
   UTM_PARAM_KEYS,
 } from '../constants';
 
-// sessionStorage can be unavailable (private browsing, some test envs); degrade to a no-op.
+// sessionStorage may be unavailable; degrade to a no-op.
 function getStoredUtmParams() {
   try {
     return window.sessionStorage.getItem(LEAD_GEN_UTM_STORAGE_KEY) || '';
@@ -22,8 +24,7 @@ function storeUtmParams(search) {
   }
 }
 
-// Extracts only UTM_PARAM_KEYS (not catalog filters), falling back to the last-seen
-// values once the search library rewrites the url and drops params it doesn't recognize.
+// Falls back to the last-seen UTM params once the search library rewrites the url and drops them.
 export function getUtmParams(search = window.location.search) {
   const currentParams = new URLSearchParams(search);
   const utmParams = new URLSearchParams();
@@ -45,8 +46,26 @@ export function hasUtmParams(search = window.location.search) {
   return [...getUtmParams(search)].length > 0;
 }
 
+// Gates only utm_source=edxenterprise traffic; utm_medium/utm_campaign are optional.
+export function isGatedCampaign(search = window.location.search) {
+  return getUtmParams(search).get('utm_source') === LEAD_GEN_GATE_UTM_SOURCE;
+}
+
+// Mirrors the UTM persistence above: cache disable_lead_gen once seen, since the url can drop it too.
 export function isLeadGenDisabled(search = window.location.search) {
-  return new URLSearchParams(search).get(LEAD_GEN_DISABLE_PARAM) === 'true';
+  if (new URLSearchParams(search).get(LEAD_GEN_DISABLE_PARAM) === 'true') {
+    try {
+      window.sessionStorage.setItem(LEAD_GEN_DISABLE_STORAGE_KEY, 'true');
+    } catch (e) {
+      // ignore
+    }
+    return true;
+  }
+  try {
+    return window.sessionStorage.getItem(LEAD_GEN_DISABLE_STORAGE_KEY) === 'true';
+  } catch (e) {
+    return false;
+  }
 }
 
 export function hasSubmittedLeadGenForm() {
@@ -66,7 +85,7 @@ export function markLeadGenFormSubmitted() {
 }
 
 export function shouldGateDownload(search = window.location.search) {
-  return hasUtmParams(search)
+  return isGatedCampaign(search)
     && !isLeadGenDisabled(search)
     && !hasSubmittedLeadGenForm();
 }

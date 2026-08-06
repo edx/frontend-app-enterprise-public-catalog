@@ -4,12 +4,15 @@ import {
   getUtmParams,
   hasSubmittedLeadGenForm,
   hasUtmParams,
+  isGatedCampaign,
   isLeadGenDisabled,
   markLeadGenFormSubmitted,
   shouldGateDownload,
 } from './utmUtils';
+import { LEAD_GEN_GATE_UTM_SOURCE } from '../constants';
 
 const FORM_URL = 'https://get.business.edx.org/l/1059723/2025-07-22/fr8j4b';
+const GATED_CAMPAIGN_SEARCH = `?utm_source=${LEAD_GEN_GATE_UTM_SOURCE}`;
 
 describe('utmUtils', () => {
   beforeEach(() => {
@@ -70,34 +73,61 @@ describe('utmUtils', () => {
 
   describe('isLeadGenDisabled', () => {
     it('is true only for the explicit opt-out value', () => {
-      expect(isLeadGenDisabled('?disable_lead_gen=true')).toBe(true);
       expect(isLeadGenDisabled('?disable_lead_gen=false')).toBe(false);
       expect(isLeadGenDisabled('?disable_lead_gen=1')).toBe(false);
       expect(isLeadGenDisabled('')).toBe(false);
+      expect(isLeadGenDisabled('?disable_lead_gen=true')).toBe(true);
+    });
+
+    it('stays true for the rest of the session once opted out', () => {
+      expect(isLeadGenDisabled('?disable_lead_gen=true')).toBe(true);
+      expect(isLeadGenDisabled('')).toBe(true);
+    });
+  });
+
+  describe('isGatedCampaign', () => {
+    it('matches on utm_source alone', () => {
+      expect(isGatedCampaign(GATED_CAMPAIGN_SEARCH)).toBe(true);
+    });
+
+    it('ignores utm_medium and utm_campaign', () => {
+      expect(isGatedCampaign(`${GATED_CAMPAIGN_SEARCH}&utm_medium=anything&utm_campaign=whatever`)).toBe(true);
+    });
+
+    it('rejects other campaign traffic entirely', () => {
+      expect(isGatedCampaign('?utm_source=google&utm_medium=cpc&utm_campaign=brand')).toBe(false);
+    });
+
+    it('rejects a direct visit with no utm params', () => {
+      expect(isGatedCampaign('?q=python')).toBe(false);
     });
   });
 
   describe('shouldGateDownload', () => {
-    it('gates campaign traffic', () => {
-      expect(shouldGateDownload('?utm_source=wordpress')).toBe(true);
+    it('gates business.edx.org referral traffic', () => {
+      expect(shouldGateDownload(GATED_CAMPAIGN_SEARCH)).toBe(true);
     });
 
     it('does not gate direct visits', () => {
       expect(shouldGateDownload('?q=python')).toBe(false);
     });
 
+    it('does not gate traffic tagged with a different campaign', () => {
+      expect(shouldGateDownload('?utm_source=google&utm_medium=cpc&utm_campaign=brand')).toBe(false);
+    });
+
     it('does not gate when explicitly disabled', () => {
-      expect(shouldGateDownload('?utm_source=wordpress&disable_lead_gen=true')).toBe(false);
+      expect(shouldGateDownload(`${GATED_CAMPAIGN_SEARCH}&disable_lead_gen=true`)).toBe(false);
     });
 
     it('does not re-gate a visitor who already submitted', () => {
       markLeadGenFormSubmitted();
       expect(hasSubmittedLeadGenForm()).toBe(true);
-      expect(shouldGateDownload('?utm_source=wordpress')).toBe(false);
+      expect(shouldGateDownload(GATED_CAMPAIGN_SEARCH)).toBe(false);
     });
 
     it('keeps gating after the url loses its utm params this session', () => {
-      expect(shouldGateDownload('?utm_source=wordpress')).toBe(true);
+      expect(shouldGateDownload(GATED_CAMPAIGN_SEARCH)).toBe(true);
       expect(shouldGateDownload('')).toBe(true);
     });
   });

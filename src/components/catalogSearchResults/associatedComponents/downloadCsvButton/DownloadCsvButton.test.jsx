@@ -7,6 +7,9 @@ import userEvent from '@testing-library/user-event';
 import DownloadCsvButton from './DownloadCsvButton';
 import { renderWithRouter } from '../../../tests/testUtils';
 import EnterpriseCatalogApiService from '../../../../data/services/EnterpriseCatalogAPIService';
+import { LEAD_GEN_GATE_UTM_SOURCE } from '../../../../constants';
+
+const GATED_CAMPAIGN_SEARCH = `?utm_source=${LEAD_GEN_GATE_UTM_SOURCE}`;
 
 // file-saver mocks
 jest.mock('file-saver', () => ({
@@ -117,16 +120,24 @@ describe('Download button', () => {
       expect(mockCatalogApiService).toHaveBeenCalledTimes(1);
     });
 
-    test('shows the form instead of downloading for campaign traffic', async () => {
-      global.location.search = '?utm_source=wordpress&utm_campaign=b2b';
+    test('shows the form instead of downloading for the gated campaign', async () => {
+      global.location.search = GATED_CAMPAIGN_SEARCH;
       renderWithRouter(<DownloadCsvButton {...defaultProps} />);
       await clickDownload();
       expect(document.querySelector('iframe')).toBeInTheDocument();
       expect(mockCatalogApiService).not.toHaveBeenCalled();
     });
 
+    test('downloads directly for a different campaign', async () => {
+      global.location.search = '?utm_source=google&utm_medium=cpc&utm_campaign=brand';
+      renderWithRouter(<DownloadCsvButton {...defaultProps} />);
+      await clickDownload();
+      expect(document.querySelector('iframe')).not.toBeInTheDocument();
+      expect(mockCatalogApiService).toHaveBeenCalledTimes(1);
+    });
+
     test('honours the disable param on the incoming link', async () => {
-      global.location.search = '?utm_source=wordpress&disable_lead_gen=true';
+      global.location.search = `${GATED_CAMPAIGN_SEARCH}&disable_lead_gen=true`;
       renderWithRouter(<DownloadCsvButton {...defaultProps} />);
       await clickDownload();
       expect(document.querySelector('iframe')).not.toBeInTheDocument();
@@ -134,42 +145,48 @@ describe('Download button', () => {
     });
 
     test('downloads once the form reports a submit', async () => {
-      global.location.search = '?utm_source=wordpress';
+      global.location.search = GATED_CAMPAIGN_SEARCH;
       renderWithRouter(<DownloadCsvButton {...defaultProps} />);
       await clickDownload();
       expect(mockCatalogApiService).not.toHaveBeenCalled();
 
+      const iframe = document.querySelector('iframe');
       act(() => {
         window.dispatchEvent(new MessageEvent('message', {
           origin: 'https://get.business.edx.org',
           data: { pardotFormSubmitted: true },
+          source: iframe.contentWindow,
         }));
       });
       expect(mockCatalogApiService).toHaveBeenCalledTimes(1);
     });
 
     test('stays gated when a submit message comes from another origin', async () => {
-      global.location.search = '?utm_source=wordpress';
+      global.location.search = GATED_CAMPAIGN_SEARCH;
       renderWithRouter(<DownloadCsvButton {...defaultProps} />);
       await clickDownload();
 
+      const iframe = document.querySelector('iframe');
       act(() => {
         window.dispatchEvent(new MessageEvent('message', {
           origin: 'https://evil.example.com',
           data: { pardotFormSubmitted: true },
+          source: iframe.contentWindow,
         }));
       });
       expect(mockCatalogApiService).not.toHaveBeenCalled();
     });
 
     test('does not re-gate a second download in the same session', async () => {
-      global.location.search = '?utm_source=wordpress';
+      global.location.search = GATED_CAMPAIGN_SEARCH;
       const { unmount } = renderWithRouter(<DownloadCsvButton {...defaultProps} />);
       await clickDownload();
+      const iframe = document.querySelector('iframe');
       act(() => {
         window.dispatchEvent(new MessageEvent('message', {
           origin: 'https://get.business.edx.org',
           data: { pardotFormSubmitted: true },
+          source: iframe.contentWindow,
         }));
       });
       expect(mockCatalogApiService).toHaveBeenCalledTimes(1);
@@ -182,7 +199,7 @@ describe('Download button', () => {
     });
 
     test('does not download when the form is dismissed without submitting', async () => {
-      global.location.search = '?utm_source=wordpress';
+      global.location.search = GATED_CAMPAIGN_SEARCH;
       renderWithRouter(<DownloadCsvButton {...defaultProps} />);
       await clickDownload();
 

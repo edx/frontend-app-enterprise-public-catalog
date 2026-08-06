@@ -59,9 +59,12 @@ export const UTM_PARAM_KEYS = [
   'utm_term',
 ];
 export const LEAD_GEN_DISABLE_PARAM = 'disable_lead_gen';
+export const LEAD_GEN_DISABLE_STORAGE_KEY = 'exploreCatalogLeadGenDisabled';
 export const LEAD_GEN_SUBMITTED_STORAGE_KEY = 'exploreCatalogLeadGenSubmitted';
 export const LEAD_GEN_SUBMIT_MESSAGE_KEY = 'pardotFormSubmitted';
 export const LEAD_GEN_UTM_STORAGE_KEY = 'exploreCatalogLeadGenUtmParams';
+// Only visits tagged with business.edx.org's utm_source trigger the lead-gen gate.
+export const LEAD_GEN_GATE_UTM_SOURCE = 'edxenterprise';
 
 // Ask Xpert
 export const XPERT_RESULT_STATUSES = ['IN_PROGRESS', 'PENDING', 'STARTED', 'FAILURE'];

@@ -14,9 +14,9 @@ jest.mock('@edx/frontend-platform', () => ({
   getConfig: () => ({ LEAD_GEN_FORM_URL: mockFormUrl }),
 }));
 
-const postFromOrigin = (origin, data) => {
+const postFromOrigin = (origin, data, source) => {
   act(() => {
-    window.dispatchEvent(new MessageEvent('message', { origin, data }));
+    window.dispatchEvent(new MessageEvent('message', { origin, data, source }));
   });
 };
 
@@ -69,28 +69,39 @@ describe('LeadGenModal', () => {
   it('unlocks the download when the form reports a submit', () => {
     const onSubmitted = jest.fn();
     renderWithRouter(<LeadGenModal {...defaultProps} onSubmitted={onSubmitted} />);
-    postFromOrigin(FORM_ORIGIN, { pardotFormSubmitted: true });
+    const iframe = screen.getByTitle('Catalog download request form');
+    postFromOrigin(FORM_ORIGIN, { pardotFormSubmitted: true }, iframe.contentWindow);
     expect(onSubmitted).toHaveBeenCalledTimes(1);
   });
 
   it('ignores a submit message from any other origin', () => {
     const onSubmitted = jest.fn();
     renderWithRouter(<LeadGenModal {...defaultProps} onSubmitted={onSubmitted} />);
-    postFromOrigin('https://evil.example.com', { pardotFormSubmitted: true });
-    postFromOrigin('http://get.business.edx.org', { pardotFormSubmitted: true });
+    const iframe = screen.getByTitle('Catalog download request form');
+    postFromOrigin('https://evil.example.com', { pardotFormSubmitted: true }, iframe.contentWindow);
+    postFromOrigin('http://get.business.edx.org', { pardotFormSubmitted: true }, iframe.contentWindow);
+    expect(onSubmitted).not.toHaveBeenCalled();
+  });
+
+  it('ignores a submit message that did not come from the form iframe', () => {
+    const onSubmitted = jest.fn();
+    renderWithRouter(<LeadGenModal {...defaultProps} onSubmitted={onSubmitted} />);
+    postFromOrigin(FORM_ORIGIN, { pardotFormSubmitted: true }, window);
     expect(onSubmitted).not.toHaveBeenCalled();
   });
 
   it('ignores a truthy-but-not-true submit value', () => {
     const onSubmitted = jest.fn();
     renderWithRouter(<LeadGenModal {...defaultProps} onSubmitted={onSubmitted} />);
-    postFromOrigin(FORM_ORIGIN, { pardotFormSubmitted: 'yes' });
+    const iframe = screen.getByTitle('Catalog download request form');
+    postFromOrigin(FORM_ORIGIN, { pardotFormSubmitted: 'yes' }, iframe.contentWindow);
     expect(onSubmitted).not.toHaveBeenCalled();
   });
 
   it('tolerates a message with no data', () => {
     renderWithRouter(<LeadGenModal {...defaultProps} />);
-    expect(() => postFromOrigin(FORM_ORIGIN, null)).not.toThrow();
+    const iframe = screen.getByTitle('Catalog download request form');
+    expect(() => postFromOrigin(FORM_ORIGIN, null, iframe.contentWindow)).not.toThrow();
   });
 
   it('shows no iframe when the form url is not configured', () => {

@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+  useEffect, useRef, useState,
+} from 'react';
 import PropTypes from 'prop-types';
 import { ModalDialog, Spinner } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
@@ -9,6 +11,7 @@ import { buildLeadGenFormUrl, getLeadGenFormOrigin } from '../../utils/utmUtils'
 const LeadGenModal = ({ isOpen, onClose, onSubmitted }) => {
   const { LEAD_GEN_FORM_URL: formUrl } = getConfig();
   const [isIframeLoaded, setIsIframeLoaded] = useState(false);
+  const iframeRef = useRef(null);
 
   const formOrigin = getLeadGenFormOrigin(formUrl);
   const src = formOrigin ? buildLeadGenFormUrl(formUrl) : null;
@@ -18,7 +21,8 @@ const LeadGenModal = ({ isOpen, onClose, onSubmitted }) => {
       return undefined;
     }
     const handleMessage = (event) => {
-      if (event.origin !== formOrigin) {
+      // Origin alone isn't enough — also require the message came from this iframe.
+      if (event.origin !== formOrigin || event.source !== iframeRef.current?.contentWindow) {
         return;
       }
       const data = event.data || {};
@@ -50,10 +54,11 @@ const LeadGenModal = ({ isOpen, onClose, onSubmitted }) => {
               </div>
             )}
             <iframe
+              ref={iframeRef}
               title="Catalog download request form"
               src={src}
               width="100%"
-              height="500"
+              height="530"
               type="text/html"
               frameBorder="0"
               style={{ border: 0, display: isIframeLoaded ? 'block' : 'none' }}

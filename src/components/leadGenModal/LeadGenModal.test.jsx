@@ -54,6 +54,13 @@ describe('LeadGenModal', () => {
     expect(iframe).toHaveStyle({ border: '0' });
   });
 
+  it('sandboxes the embed against top-navigation and popups', () => {
+    renderWithRouter(<LeadGenModal {...defaultProps} />);
+    const iframe = screen.getByTitle('Catalog download request form');
+    expect(iframe).toHaveAttribute('sandbox', 'allow-scripts allow-forms allow-same-origin allow-popups');
+    expect(iframe).toHaveAttribute('referrerPolicy', 'strict-origin-when-cross-origin');
+  });
+
   it('shows a loading spinner until the iframe finishes loading', () => {
     renderWithRouter(<LeadGenModal {...defaultProps} />);
     const iframe = screen.getByTitle('Catalog download request form');

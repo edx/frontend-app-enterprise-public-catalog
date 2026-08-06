@@ -61,6 +61,12 @@ const LeadGenModal = ({ isOpen, onClose, onSubmitted }) => {
               height="530"
               type="text/html"
               frameBorder="0"
+              // allow-scripts/-forms/-same-origin: what Pardot needs to validate, submit,
+              // and read its own tracking cookies. allow-popups: the embed's "Privacy
+              // Statement" link opens in a new tab. Deliberately omits allow-top-navigation
+              // so the embed can't hijack this tab.
+              sandbox="allow-scripts allow-forms allow-same-origin allow-popups"
+              referrerPolicy="strict-origin-when-cross-origin"
               style={{ border: 0, display: isIframeLoaded ? 'block' : 'none' }}
               onLoad={() => setIsIframeLoaded(true)}
             />

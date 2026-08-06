@@ -1,0 +1,84 @@
+src/components/catalogModalBanner/CatalogCourseModalBanner.test.jsx
+  s_d161cd4f0b7fca::t_b70018b7b1de48 1-5,7-20,22-31,33-37,41-48,52-53
+  s_d161cd4f0b7fca::t_80fc7a1acdd171 49-51
+  s_b11d48d39c1b3d::t_01c151985e0f10 6
+  s_b11d48d39c1b3d::t_a0c67c2eb6ee81 21,32,38-40
+src/components/catalogSearchResults/CatalogSearchResults.test.jsx
+  s_d161cd4f0b7fca::t_08a3cab0cb9715 449,451
+  s_d161cd4f0b7fca::t_9bf7b51cf8c4ea 3
+  s_d161cd4f0b7fca::t_2e57a2fd866dc8 469-471,473-474
+  s_b11d48d39c1b3d::t_7e3b0e1452c5f2 17
+  s_b11d48d39c1b3d::t_e2b149a439a1b2 472
+  s_b11d48d39c1b3d::t_83431ec2af466b 450
+src/utils/catalogUtils.test.js
+  s_d161cd4f0b7fca::t_3308920eca4c07 2,9,31-32,36-37,39,41-43,49-53,57-59,63-65,69-73,75-80,89
+  s_eeafde3556b64f::t_26099255179c1c 81-88
+  s_b11d48d39c1b3d::t_d807b54024fdbf 3-8
+  s_b11d48d39c1b3d::t_9f96b2556c3658 33-35,38,40,44-48,54-56,60-62,66-68,74
+src/components/catalogModalBanner/CatalogCourseModalBanner.jsx
+  s_d161cd4f0b7fca::t_07926a99d8a6ec 11
+  s_b11d48d39c1b3d::t_600b0ed53f7c3e 85
+  s_b11d48d39c1b3d::t_2aedd87995f616 10,16-20,30-32
+src/components/courseCard/CourseCard.jsx
+  s_d161cd4f0b7fca::t_f7b78c2ed966ca 5-6,10,33-34,38
+  s_d161cd4f0b7fca::t_32aea3a921ed53 63,70-73
+  s_eeafde3556b64f::t_86f9a06f595029 64-69
+  s_b11d48d39c1b3d::t_45ca0878e6f2d6 11-16
+  s_b11d48d39c1b3d::t_b66972ba1c756f 35-37
+src/utils/catalogUtils.ts
+  s_d161cd4f0b7fca::t_5a576bc0bd01aa 54-55,59-60,62,63-64,69,71,73,75-79
+  s_eeafde3556b64f::t_37518853c8c236 40,56-58,61,67,74
+  s_b11d48d39c1b3d::t_bc569d6f60706f 115-121
+  s_b11d48d39c1b3d::t_0f15e6e3fe4ef9 5-23,34-39,43-46,48-49,51,65-66,68,70,72
+src/components/courseCard/CourseCard.test.jsx
+  s_d161cd4f0b7fca::t_30c7bcf2621669 118,120,134-135,156
+  s_eeafde3556b64f::t_d55e738ac66c7d 139-153,157
+  s_b11d48d39c1b3d::t_6a5a50bd4c1e2c 9
+  s_b11d48d39c1b3d::t_5b0f852d66e4b6 154-156
+  s_b11d48d39c1b3d::t_ab685d2f06ef09 136
+src/components/courseCard/CourseCard.messages.jsx
+  s_b11d48d39c1b3d::t_0b0766c65ac1c0 25-34
+src/components/catalogInfoModal/CatalogInfoModal.test.jsx
+  s_b11d48d39c1b3d::t_8222bf74cbf860 238-240
+  s_b11d48d39c1b3d::t_cf067bf0aa0a61 92
+  s_b11d48d39c1b3d::t_753a0b7c94bd0c 8
+src/components/catalogModalBanner/CatalogCourseModalBanner.messages.js
+  s_b11d48d39c1b3d::t_58e477b0eeac59 34-43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "0d6f5a8199f0a125e79de6c06601897abe990f59",
+  "prompts": {},
+  "humans": {
+    "h_ec7bba5198894d": {
+      "author": "vivekSonata <vpiridi-sonata@2u.com>"
+    }
+  },
+  "sessions": {
+    "s_b11d48d39c1b3d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b5997e29-2400-4a15-be2d-cd1450422bca",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "vivekSonata <vpiridi-sonata@2u.com>"
+    },
+    "s_d161cd4f0b7fca": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "be0094d0-e66d-4211-ad0f-f58ee3974fbf",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "vivekSonata <vpiridi-sonata@2u.com>"
+    },
+    "s_eeafde3556b64f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6f59475-2936-4785-9a78-9bc7de44b6b2",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "vivekSonata <vpiridi-sonata@2u.com>"
+    }
+  }
+}

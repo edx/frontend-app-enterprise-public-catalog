@@ -1,0 +1,24 @@
+src/components/leadGenModal/LeadGenModal.jsx
+  s_06eace715995ca::t_44d3b38f5c8161 64-68
+  s_06eace715995ca::t_c39f6e6f0fdd77 69
+src/components/leadGenModal/LeadGenModal.test.jsx
+  s_06eace715995ca::t_9904113f885087 57-59,61-62
+  s_06eace715995ca::t_c6d3720eb7ca89 60
+  s_06eace715995ca::t_c505a8363f6d54 56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "bbc833835d3d91b25c575ecbe133eba72895ec58",
+  "prompts": {},
+  "sessions": {
+    "s_06eace715995ca": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3b6a09ee-acc5-44de-a69a-c5cddd780a71",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Srija Indukuri <ssrijaindukuri-sonata@2u.com>"
+    }
+  }
+}

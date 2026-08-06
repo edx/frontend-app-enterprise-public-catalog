@@ -1,0 +1,53 @@
+src/utils/catalogUtils.test.js
+  s_b11d48d39c1b3d::t_d807b54024fdbf 3-8
+  s_b11d48d39c1b3d::t_9f96b2556c3658 33-35,38,40,44-48,54-56,60-62,66-68,74
+src/components/courseCard/CourseCard.jsx
+  s_b11d48d39c1b3d::t_45ca0878e6f2d6 11-16
+  s_b11d48d39c1b3d::t_b66972ba1c756f 35-37
+src/components/courseCard/CourseCard.messages.jsx
+  s_b11d48d39c1b3d::t_0b0766c65ac1c0 25-34
+src/components/catalogSearchResults/CatalogSearchResults.test.jsx
+  s_b11d48d39c1b3d::t_7e3b0e1452c5f2 17
+  s_b11d48d39c1b3d::t_e2b149a439a1b2 472
+  s_b11d48d39c1b3d::t_83431ec2af466b 450
+src/components/catalogModalBanner/CatalogCourseModalBanner.test.jsx
+  s_b11d48d39c1b3d::t_01c151985e0f10 6
+  s_b11d48d39c1b3d::t_a0c67c2eb6ee81 21,32,38-40
+src/components/catalogInfoModal/CatalogInfoModal.test.jsx
+  s_b11d48d39c1b3d::t_8222bf74cbf860 238-240
+  s_b11d48d39c1b3d::t_cf067bf0aa0a61 92
+  s_b11d48d39c1b3d::t_753a0b7c94bd0c 8
+src/utils/catalogUtils.ts
+  s_b11d48d39c1b3d::t_bc569d6f60706f 115-121
+  s_b11d48d39c1b3d::t_0f15e6e3fe4ef9 5-23,34-39,43-46,48-49,51,65-66,68,70,72
+src/components/catalogModalBanner/CatalogCourseModalBanner.jsx
+  s_b11d48d39c1b3d::t_600b0ed53f7c3e 85
+  s_b11d48d39c1b3d::t_2aedd87995f616 10,16-20,30-32
+src/components/courseCard/CourseCard.test.jsx
+  s_b11d48d39c1b3d::t_6a5a50bd4c1e2c 9
+  s_b11d48d39c1b3d::t_5b0f852d66e4b6 154-156
+  s_b11d48d39c1b3d::t_ab685d2f06ef09 136
+src/components/catalogModalBanner/CatalogCourseModalBanner.messages.js
+  s_b11d48d39c1b3d::t_58e477b0eeac59 34-43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "91b7cc948d7b7cbf3ec240e9ecff4644a5a105ef",
+  "prompts": {},
+  "humans": {
+    "h_ec7bba5198894d": {
+      "author": "vivekSonata <vpiridi-sonata@2u.com>"
+    }
+  },
+  "sessions": {
+    "s_b11d48d39c1b3d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b5997e29-2400-4a15-be2d-cd1450422bca",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "vivekSonata <vpiridi-sonata@2u.com>"
+    }
+  }
+}

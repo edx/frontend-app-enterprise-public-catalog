@@ -5,6 +5,7 @@ import '@testing-library/jest-dom/extend-expect';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import CatalogInfoModal from './CatalogInfoModal';
 import features from '../../config';
+import { formatSessionDate } from '../../utils/catalogUtils';
 
 const descriptionText = 'this is a description';
 // course descriptions are injected into the DOM with dangerouslySetInnerHTML
@@ -88,7 +89,7 @@ describe('Course info modal works as expected', () => {
     );
     expect(screen.queryByText('A la carte course price')).toBeInTheDocument();
     expect(
-      screen.queryByText('Session ends Apr 6, 2040 • 2 additional session(s)'),
+      screen.queryByText(`Session starts ${formatSessionDate(new Date('2021-09-15T16:00:00Z'))} | Session ends ${formatSessionDate(new Date('2040-04-06T16:00:00Z'))} • 2 additional session(s)`),
     ).toBeInTheDocument();
     expect(
       screen.queryByText('Included with subscription'),
@@ -234,7 +235,9 @@ describe('Executive Education info modal works as expected', () => {
     expect(screen.queryByText('100')).toBeInTheDocument();
     expect(screen.queryByText('Executive Education')).toBeInTheDocument();
     expect(screen.queryByText('Immersive, instructor-led course')).toBeInTheDocument();
-    expect(screen.queryByText('Session ends May 4, 2040'));
+    expect(
+      screen.queryByText(`Session starts ${formatSessionDate(new Date('2020-09-15T16:00:00Z'))} | Session ends ${formatSessionDate(new Date('2040-05-04T16:00:00Z'))}`),
+    ).toBeInTheDocument();
   });
 });
 

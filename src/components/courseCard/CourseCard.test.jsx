@@ -6,6 +6,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import CourseCard from './CourseCard';
 import { CONTENT_TYPE_COURSE, EXEC_ED_TITLE } from '../../constants';
 import features from '../../config';
+import { formatSessionDate } from '../../utils/catalogUtils';
 
 jest.mock('@edx/frontend-platform', () => ({
   ...jest.requireActual('@edx/frontend-platform'),
@@ -107,5 +108,51 @@ describe('Course card works as expected', () => {
     // price decimal should be truncated
     expect(screen.queryByText('$999 • Instructor led')).toBeInTheDocument();
     expect(screen.queryByText('Subscription')).toBeInTheDocument();
+  });
+  test('card does not render course dates when the course run has no start/end date', () => {
+    render(
+      <IntlProvider locale="en">
+        <CourseCard {...defaultProps} />
+      </IntlProvider>,
+    );
+    expect(screen.queryByText(/Session (starts|ends)/)).not.toBeInTheDocument();
+  });
+  test('card renders course start and end dates and availability label when present on the advertised course run', () => {
+    const dataWithDates = {
+      ...originalData,
+      advertised_course_run: {
+        pacing_type: 'self_paced',
+        start: '2020-01-24T05:00:00Z',
+        end: '2080-01-01T17:00:00Z',
+      },
+    };
+    render(
+      <IntlProvider locale="en">
+        <CourseCard original={dataWithDates} />
+      </IntlProvider>,
+    );
+    expect(screen.queryByText('Available now')).toBeInTheDocument();
+    expect(
+      screen.queryByText(`Session starts ${formatSessionDate(new Date('2020-01-24T05:00:00Z'))} | Session ends ${formatSessionDate(new Date('2080-01-01T17:00:00Z'))}`),
+    ).toBeInTheDocument();
+  });
+  test('card renders dates subtitle without an availability label when only an end date is known', () => {
+    const dataWithEndOnly = {
+      ...originalData,
+      advertised_course_run: {
+        pacing_type: 'self_paced',
+        end: '2080-01-01T17:00:00Z',
+      },
+    };
+    render(
+      <IntlProvider locale="en">
+        <CourseCard original={dataWithEndOnly} />
+      </IntlProvider>,
+    );
+    expect(screen.queryByText('Available now')).not.toBeInTheDocument();
+    expect(screen.queryByText('Starting soon')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(`Session ends ${formatSessionDate(new Date('2080-01-01T17:00:00Z'))}`),
+    ).toBeInTheDocument();
   });
 });

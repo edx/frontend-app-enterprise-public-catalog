@@ -31,6 +31,16 @@ const messages = defineMessages({
     defaultMessage: 'Immersive, instructor-led course',
     description: 'Text for modal subheader banner for exec ed courses.',
   },
+  'CatalogCourseModalBanner.availableNow': {
+    id: 'CatalogCourseModalBanner.availableNow',
+    defaultMessage: 'Available now',
+    description: 'Availability label shown in the course modal banner when the advertised session has already started.',
+  },
+  'CatalogCourseModalBanner.startingSoon': {
+    id: 'CatalogCourseModalBanner.startingSoon',
+    defaultMessage: 'Starting soon',
+    description: 'Availability label shown in the course modal banner when the advertised session has not started yet.',
+  },
 });
 
 export default messages;

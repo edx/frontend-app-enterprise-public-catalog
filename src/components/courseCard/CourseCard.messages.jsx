@@ -22,6 +22,16 @@ const messages = defineMessages({
     description:
       'When a course price is not available, notify learners that there is no data available to display.',
   },
+  'courseCard.availableNow': {
+    id: 'courseCard.availableNow',
+    defaultMessage: 'Available now',
+    description: 'Availability label shown on a course card when the advertised session has already started.',
+  },
+  'courseCard.startingSoon': {
+    id: 'courseCard.startingSoon',
+    defaultMessage: 'Starting soon',
+    description: 'Availability label shown on a course card when the advertised session has not started yet.',
+  },
 });
 
 export default messages;

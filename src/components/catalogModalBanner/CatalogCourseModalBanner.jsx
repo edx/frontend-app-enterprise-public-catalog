@@ -7,33 +7,16 @@ import {
 } from '@openedx/paragon/icons';
 import messages from './CatalogCourseModalBanner.messages';
 import {
+  AVAILABILITY_STATUS,
+  availabilitySubtitle,
   checkAvailability,
   checkSubscriptions,
 } from '../../utils/catalogUtils';
 
-const nowDate = new Date(Date.now());
-
-function availabilitySubtitle(start, end, upcomingRuns) {
-  let retString = '';
-  const options = { year: 'numeric', month: 'short', day: 'numeric' };
-  const startDate = new Date(start);
-  const endDate = new Date(end);
-  if (startDate < nowDate && endDate > nowDate) {
-    retString = `Session ends ${endDate.toLocaleDateString(
-      undefined,
-      options,
-    )}`;
-  } else if (startDate > nowDate) {
-    retString = `Session starts ${startDate.toLocaleDateString(
-      undefined,
-      options,
-    )}`;
-  }
-  if (upcomingRuns !== undefined && upcomingRuns > 0) {
-    retString += ` • ${upcomingRuns} additional session(s)`;
-  }
-  return retString;
-}
+const AVAILABILITY_MESSAGE_KEYS = {
+  [AVAILABILITY_STATUS.AVAILABLE_NOW]: 'CatalogCourseModalBanner.availableNow',
+  [AVAILABILITY_STATUS.STARTING_SOON]: 'CatalogCourseModalBanner.startingSoon',
+};
 
 const CatalogCourseModalBanner = ({
   coursePrice,
@@ -44,6 +27,9 @@ const CatalogCourseModalBanner = ({
   execEd,
 }) => {
   const intl = useIntl();
+  const availabilityStatus = checkAvailability(startDate, endDate);
+  const availabilityMessageKey = AVAILABILITY_MESSAGE_KEYS[availabilityStatus];
+  const availabilityLabel = availabilityMessageKey ? intl.formatMessage(messages[availabilityMessageKey]) : '';
 
   return (
     <div className="banner my-3">
@@ -96,7 +82,7 @@ const CatalogCourseModalBanner = ({
       <div className="banner-section mx-3">
         <div className="banner h4 mb-0">
           <Icon className="mr-1" src={EventNote} />
-          {checkAvailability(startDate, endDate)}
+          {availabilityLabel}
         </div>
         <div className="banner-subtitle small">
           {availabilitySubtitle(startDate, endDate, upcomingRuns)}{' '}

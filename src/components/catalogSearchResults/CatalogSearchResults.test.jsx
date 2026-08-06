@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  act, render, screen, waitFor,
+  act, render, screen, waitFor, within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom/extend-expect';
@@ -14,6 +14,7 @@ import {
 } from './CatalogSearchResults';
 import { renderWithRouter } from '../tests/testUtils';
 import messages from './CatalogSearchResults.messages';
+import { formatSessionDate } from '../../utils/catalogUtils';
 import {
   CONTENT_TYPE_COURSE,
   CONTENT_TYPE_PROGRAM,
@@ -445,7 +446,9 @@ describe('Main Catalogs view works as expected', () => {
     const courseTitle = screen.getByText('test course');
     await user.click(courseTitle);
 
-    await waitFor(() => expect(screen.queryByText('Session ends Jan 1, 2080')).toBeInTheDocument());
+    await waitFor(() => expect(
+      screen.queryByText(`Session starts ${formatSessionDate(new Date('2020-01-24T05:00:00Z'))} | Session ends ${formatSessionDate(new Date('2080-01-01T17:00:00Z'))}`),
+    ).toBeInTheDocument());
     await waitFor(() => expect(screen.queryByText('About this course')).toBeInTheDocument());
   });
   test('testing card course modal pops up ', async () => {
@@ -463,7 +466,12 @@ describe('Main Catalogs view works as expected', () => {
     const user = userEvent.setup();
     await user.click(courseTitle);
     await waitFor(() => expect(screen.queryByText('A la carte course price')).toBeInTheDocument());
-    await waitFor(() => expect(screen.queryByText('Session ends Jan 1, 2080')).toBeInTheDocument());
+    await waitFor(() => {
+      const dialog = within(screen.getByRole('dialog'));
+      expect(
+        dialog.queryByText(`Session starts ${formatSessionDate(new Date('2020-01-24T05:00:00Z'))} | Session ends ${formatSessionDate(new Date('2080-01-01T17:00:00Z'))}`),
+      ).toBeInTheDocument();
+    });
     await act(() => screen.findByText('About this course'));
     await waitFor(() => expect(screen.queryByText('About this course')).toBeInTheDocument());
   });

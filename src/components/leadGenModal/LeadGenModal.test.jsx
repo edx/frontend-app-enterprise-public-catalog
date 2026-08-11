@@ -48,9 +48,10 @@ describe('LeadGenModal', () => {
     renderWithRouter(<LeadGenModal {...defaultProps} />);
     const iframe = screen.getByTitle('Catalog download request form');
     expect(iframe).toHaveAttribute('width', '100%');
-    expect(iframe).toHaveAttribute('height', '500');
+    expect(iframe).toHaveAttribute('height', '700');
     expect(iframe).toHaveAttribute('type', 'text/html');
     expect(iframe).toHaveAttribute('frameBorder', '0');
+    expect(iframe).toHaveAttribute('scrolling', 'no');
     expect(iframe).toHaveStyle({ border: '0' });
   });
 

@@ -43,7 +43,6 @@ const LeadGenModal = ({ isOpen, onClose, onSubmitted }) => {
       size="lg"
       hasCloseButton={false}
       isFullscreenOnMobile
-      isOverflowVisible
       className="lead-gen-modal"
     >
       <ModalDialog.Body>
@@ -57,7 +56,7 @@ const LeadGenModal = ({ isOpen, onClose, onSubmitted }) => {
               />
             </h2>
             {!isIframeLoaded && (
-              <div className="d-flex justify-content-center align-items-center" style={{ height: 500 }}>
+              <div className="d-flex justify-content-center align-items-center" style={{ height: 700 }}>
                 <Spinner animation="border" screenReaderText="Loading form" />
               </div>
             )}
@@ -66,9 +65,10 @@ const LeadGenModal = ({ isOpen, onClose, onSubmitted }) => {
               title="Catalog download request form"
               src={src}
               width="100%"
-              height="500"
+              height="700"
               type="text/html"
               frameBorder="0"
+              scrolling="no"
               // allow-scripts/-forms/-same-origin: what Pardot needs to validate, submit,
               // and read its own tracking cookies. allow-popups: the embed's "Privacy
               // Statement" link opens in a new tab. Deliberately omits allow-top-navigation

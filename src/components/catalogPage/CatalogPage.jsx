@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   SearchData,
@@ -11,6 +12,7 @@ import Hero from '../hero/Hero';
 import messages from './CatalogPage.messages';
 import CatalogSelectionDeck from '../catalogSelectionDeck/CatalogSelectionDeck';
 import features from '../../config';
+import { getUtmParams } from '../../utils/utmUtils';
 import {
   AVAILABILITY_REFINEMENT,
   AVAILABILITY_REFINEMENT_DEFAULTS,
@@ -48,6 +50,12 @@ const CatalogPage = () => {
   const intl = useIntl();
   const location = useLocation();
   const config = getConfig();
+
+  // Capture utm params on load, before filtering can rewrite the url and drop them.
+  useEffect(() => {
+    getUtmParams();
+  }, []);
+
   // Default routing:
   //   1. If our url on load does not have a catalog parameter set, set one.
   //   2. If our url on load does not have an availability param set, set to available and

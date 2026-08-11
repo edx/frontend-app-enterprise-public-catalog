@@ -50,6 +50,22 @@ export const EDX_COURSE_TITLE_DESC = 'Self paced online learning from world-clas
 export const TWOU_EXEC_ED_TITLE_DESC = 'Immersive, instructor led online short courses designed to develop interpersonal, analytical, and critical thinking skills.';
 export const PROGRAM_TITLE_DESC = 'Multi-course bundled learning for skills mastery and to earn credentials such as Professional Certificates, MicroBachelors™, MicroMasters®, and Master’s Degrees.';
 
+// Lead generation form
+export const UTM_PARAM_KEYS = [
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_content',
+  'utm_term',
+];
+export const LEAD_GEN_DISABLE_PARAM = 'disable_lead_gen';
+export const LEAD_GEN_DISABLE_STORAGE_KEY = 'exploreCatalogLeadGenDisabled';
+export const LEAD_GEN_SUBMITTED_STORAGE_KEY = 'exploreCatalogLeadGenSubmitted';
+export const LEAD_GEN_SUBMIT_MESSAGE_KEY = 'pardotFormSubmitted';
+export const LEAD_GEN_UTM_STORAGE_KEY = 'exploreCatalogLeadGenUtmParams';
+// Only visits tagged with business.edx.org's utm_source trigger the lead-gen gate.
+export const LEAD_GEN_GATE_UTM_SOURCE = 'edxenterprise';
+
 // Ask Xpert
 export const XPERT_RESULT_STATUSES = ['IN_PROGRESS', 'PENDING', 'STARTED', 'FAILURE'];
 export const XPERT_POLLING_RETRY_INTERVAL = 5000;

@@ -40,6 +40,7 @@ initialize({
         ALGOLIA_INDEX_NAME: process.env.ALGOLIA_INDEX_NAME || null,
         ALGOLIA_INDEX_NAME_V2: process.env.ALGOLIA_INDEX_NAME_V2 || null,
         HUBSPOT_MARKETING_URL: process.env.HUBSPOT_MARKETING_URL || null,
+        LEAD_GEN_FORM_URL: process.env.LEAD_GEN_FORM_URL || null,
         EDX_FOR_SUBSCRIPTION_TITLE: process.env.EDX_FOR_SUBSCRIPTION_TITLE || null,
         EDX_ENTERPRISE_ALACARTE_TITLE:
           process.env.EDX_ENTERPRISE_ALACARTE_TITLE || null,

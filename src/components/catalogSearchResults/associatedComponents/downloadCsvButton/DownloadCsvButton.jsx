@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -6,31 +6,33 @@ import {
 } from '@openedx/paragon';
 import { Check, Close, Download } from '@openedx/paragon/icons';
 import { saveAs } from 'file-saver';
+import { getConfig } from '@edx/frontend-platform';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import EnterpriseCatalogApiService from '../../../../data/services/EnterpriseCatalogAPIService';
+import LeadGenModal from '../../../leadGenModal/LeadGenModal';
+import { markLeadGenFormSubmitted, shouldGateDownload, getLeadGenFormOrigin } from '../../../../utils/utmUtils';
 
 const DownloadCsvButton = ({ facets, query }) => {
   const [isOpen, open, close] = useToggle(false);
   const [filters, setFilters] = useState();
   const [buttonState, setButtonState] = useState('default');
   const [shouldUseLearnerPortalLinks, setShouldUseLearnerPortalLinks] = useState(false);
+  const [isLeadGenOpen, setIsLeadGenOpen] = useState(false);
   const handleChange = e => setShouldUseLearnerPortalLinks(e.target.checked);
 
   const intl = useIntl();
 
-  const formatFilterText = (filterObject) => {
+  const startDownload = useCallback(() => {
     let filterString = '';
-    Object.keys(filterObject).forEach((key) => {
-      const currentFilters = [...filterObject[key]];
-      currentFilters.unshift(filterString);
-      filterString = currentFilters.join(', ');
+    Object.keys(facets).forEach((key) => {
+      const values = facets[key];
+      if (!Array.isArray(values) || !values.length) {
+        return;
+      }
+      filterString = [filterString, ...values].join(', ');
     });
     setFilters(filterString.slice(2));
-  };
-
-  const handleClick = () => {
-    formatFilterText(facets);
     open();
     setButtonState('pending');
     EnterpriseCatalogApiService.generateCsvDownloadLink(
@@ -44,6 +46,25 @@ const DownloadCsvButton = ({ facets, query }) => {
       saveAs(blob, `Enterprise-Catalog-Export-${timestamp}.xlsx`);
       setButtonState('complete');
     }).catch(() => setButtonState('error'));
+  }, [facets, query, shouldUseLearnerPortalLinks, open]);
+
+  const handleClick = () => {
+    const { LEAD_GEN_FORM_URL } = getConfig();
+    if (shouldGateDownload() && getLeadGenFormOrigin(LEAD_GEN_FORM_URL)) {
+      setIsLeadGenOpen(true);
+      return;
+    }
+    startDownload();
+  };
+
+  const handleLeadGenSubmitted = useCallback(() => {
+    markLeadGenFormSubmitted();
+    setIsLeadGenOpen(false);
+    startDownload();
+  }, [startDownload]);
+
+  const handleLeadGenClose = () => {
+    setIsLeadGenOpen(false);
   };
 
   const toastText = intl.formatMessage({
@@ -53,6 +74,13 @@ const DownloadCsvButton = ({ facets, query }) => {
   }, { filters });
   return (
     <>
+      {isLeadGenOpen && (
+        <LeadGenModal
+          isOpen={isLeadGenOpen}
+          onClose={handleLeadGenClose}
+          onSubmitted={handleLeadGenSubmitted}
+        />
+      )}
       {isOpen && (
         <Toast onClose={close} show={isOpen}>
           {toastText}

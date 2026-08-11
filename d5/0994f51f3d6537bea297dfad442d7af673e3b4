@@ -1,0 +1,19 @@
+src/components/leadGenModal/LeadGenModal.test.jsx
+  s_757f6bf8e4c356::t_c8e2e03416632c 51,54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "d50994f51f3d6537bea297dfad442d7af673e3b4",
+  "prompts": {},
+  "sessions": {
+    "s_757f6bf8e4c356": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ccf55e52-66a4-48ed-8e71-7ea9628d923c",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": null
+    }
+  }
+}

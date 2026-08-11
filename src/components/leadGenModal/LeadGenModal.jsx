@@ -4,6 +4,7 @@ import React, {
 import PropTypes from 'prop-types';
 import { ModalDialog, Spinner } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import { LEAD_GEN_SUBMIT_MESSAGE_KEY } from '../../constants';
 import { buildLeadGenFormUrl, getLeadGenFormOrigin } from '../../utils/utmUtils';
@@ -48,8 +49,15 @@ const LeadGenModal = ({ isOpen, onClose, onSubmitted }) => {
       <ModalDialog.Body>
         {src && (
           <>
+            <h2 className="h4 lead-gen-modal-title">
+              <FormattedMessage
+                id="leadGenModal.title"
+                defaultMessage="Complete to download your custom catalogue"
+                description="Title shown above the lead gen form explaining what completing it unlocks."
+              />
+            </h2>
             {!isIframeLoaded && (
-              <div className="d-flex justify-content-center align-items-center" style={{ height: 530 }}>
+              <div className="d-flex justify-content-center align-items-center" style={{ height: 500 }}>
                 <Spinner animation="border" screenReaderText="Loading form" />
               </div>
             )}
@@ -58,7 +66,7 @@ const LeadGenModal = ({ isOpen, onClose, onSubmitted }) => {
               title="Catalog download request form"
               src={src}
               width="100%"
-              height="530"
+              height="500"
               type="text/html"
               frameBorder="0"
               // allow-scripts/-forms/-same-origin: what Pardot needs to validate, submit,

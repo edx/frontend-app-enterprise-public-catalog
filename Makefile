@@ -6,6 +6,11 @@ transifex_input = $(i18n)/transifex_input.json
 # This directory must match .babelrc .
 transifex_temp = ./temp/babel-plugin-formatjs
 
+# Variables for additional translation sources and imports (define in edx-internal if needed)
+ATLAS_EXTRA_SOURCES ?=
+ATLAS_EXTRA_INTL_IMPORTS ?=
+ATLAS_OPTIONS ?=
+
 precommit:
 	npm run lint
 	npm audit
@@ -39,9 +44,10 @@ pull_translations:
 	           translations/frontend-component-header/src/i18n/messages:frontend-component-header \
 	           translations/frontend-platform/src/i18n/messages:frontend-platform \
 	           translations/paragon/src/i18n/messages:paragon \
-	           translations/frontend-app-enterprise-public-catalog/src/i18n/messages:frontend-app-enterprise-public-catalog
+	           translations/frontend-app-enterprise-public-catalog/src/i18n/messages:frontend-app-enterprise-public-catalog \
+	           $(ATLAS_EXTRA_SOURCES)
 
-	$(intl_imports) frontend-component-header frontend-component-footer frontend-platform paragon frontend-app-enterprise-public-catalog
+	$(intl_imports) frontend-component-header frontend-component-footer frontend-platform paragon frontend-app-enterprise-public-catalog $(ATLAS_EXTRA_INTL_IMPORTS)
 
 # This target is used by Travis.
 validate-no-uncommitted-package-lock-changes:

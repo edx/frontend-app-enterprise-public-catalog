@@ -1,0 +1,19 @@
+src/components/leadGenModal/LeadGenModal.jsx
+  s_9a882f430ce5dc::t_939aa211c415a1 54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "d1110977edf4c5cad0f330776eabd12dd142be8b",
+  "prompts": {},
+  "sessions": {
+    "s_9a882f430ce5dc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "04f08bfc-a4ec-4e5c-9c9d-d5b6888838e2",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Srija Indukuri <ssrijaindukuri-sonata@2u.com>"
+    }
+  }
+}

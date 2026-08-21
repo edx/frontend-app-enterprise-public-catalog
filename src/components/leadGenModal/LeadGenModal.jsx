@@ -51,7 +51,7 @@ const LeadGenModal = ({ isOpen, onClose, onSubmitted }) => {
             <h2 className="h4 lead-gen-modal-title">
               <FormattedMessage
                 id="leadGenModal.title"
-                defaultMessage="Complete to download your custom catalogue"
+                defaultMessage="Complete to download your custom catalog"
                 description="Title shown above the lead gen form explaining what completing it unlocks."
               />
             </h2>

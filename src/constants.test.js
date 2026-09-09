@@ -54,15 +54,50 @@ describe('search facet filter overrides for ENT-12318', () => {
     });
   });
 
-  it('orders Course Language, Translation Language, and Transcript Language consecutively', () => {
-    const languageFilterAttributes = [
-      LANGUAGE_REFINEMENT,
-      TRANSLATION_LANGUAGE_REFINEMENT,
-      TRANSCRIPT_LANGUAGE_REFINEMENT,
-    ];
-    const order = SEARCH_FACET_FILTERS
-      .map((f) => f.attribute)
-      .filter((attribute) => languageFilterAttributes.includes(attribute));
-    expect(order).toEqual(languageFilterAttributes);
+  it('orders Course Language, Translation Language, and Transcript Language consecutively, with no other facet in between', () => {
+    const languageIndex = SEARCH_FACET_FILTERS.findIndex((f) => f.attribute === LANGUAGE_REFINEMENT);
+    const translationIndex = SEARCH_FACET_FILTERS
+      .findIndex((f) => f.attribute === TRANSLATION_LANGUAGE_REFINEMENT);
+    const transcriptIndex = SEARCH_FACET_FILTERS
+      .findIndex((f) => f.attribute === TRANSCRIPT_LANGUAGE_REFINEMENT);
+    expect(translationIndex).toBe(languageIndex + 1);
+    expect(transcriptIndex).toBe(translationIndex + 1);
+  });
+});
+
+describe('search facet filter overrides when translation_languages already exists upstream', () => {
+  it('repositions an existing translation_languages facet directly after language, instead of leaving it in place', () => {
+    jest.resetModules();
+    jest.doMock('@2uinc/frontend-enterprise-catalog-search', () => ({
+      SEARCH_FACET_FILTERS: [
+        { attribute: 'skill_names', title: 'Skills' },
+        { attribute: 'level_type', title: 'Level' },
+        { attribute: 'translation_languages', title: 'Translation Languages', isSortedAlphabetical: true },
+        { attribute: 'availability', title: 'Availability' },
+        { attribute: 'language', title: 'Language', isSortedAlphabetical: true },
+        { attribute: 'transcript_languages', title: 'Subtitle', isSortedAlphabetical: true },
+      ],
+    }));
+    jest.doMock('./config', () => ({
+      __esModule: true,
+      default: { PROGRAM_TYPE_FACET: false, NEW_CONTENT_FACET: false },
+    }));
+
+    // eslint-disable-next-line global-require
+    const constantsModule = require('./constants');
+    const {
+      SEARCH_FACET_FILTERS: filtersWithPreexistingTranslation,
+      LANGUAGE_REFINEMENT: languageRefinement,
+      TRANSLATION_LANGUAGE_REFINEMENT: translationLanguageRefinement,
+    } = constantsModule;
+
+    const languageIndex = filtersWithPreexistingTranslation
+      .findIndex((f) => f.attribute === languageRefinement);
+    const translationIndex = filtersWithPreexistingTranslation
+      .findIndex((f) => f.attribute === translationLanguageRefinement);
+    expect(translationIndex).toBe(languageIndex + 1);
+    expect(filtersWithPreexistingTranslation.filter(
+      (f) => f.attribute === translationLanguageRefinement,
+    )).toHaveLength(1);
   });
 });

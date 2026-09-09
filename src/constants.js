@@ -129,20 +129,31 @@ OVERRIDE_FACET_FILTERS.forEach(
   },
 );
 
-// Add the Translation Language facet directly after Course Language, so the
-// filter order reads: Course Language, Translation Language, Transcript Language.
+// Reposition (or insert) the Translation Language facet directly after Course
+// Language, so the filter order reads: Course Language, Translation Language,
+// Transcript Language — even if translation_languages already exists elsewhere
+// in the upstream facet list (e.g. if a future package version adds it).
 const languageFacetIndex = SEARCH_FACET_FILTERS.findIndex(
   (facetFilter) => facetFilter.attribute === LANGUAGE_REFINEMENT,
 );
-const hasTranslationLanguageFacet = SEARCH_FACET_FILTERS.some(
-  (facetFilter) => facetFilter.attribute === TRANSLATION_LANGUAGE_REFINEMENT,
-);
-if (languageFacetIndex >= 0 && !hasTranslationLanguageFacet) {
-  SEARCH_FACET_FILTERS.splice(languageFacetIndex + 1, 0, {
-    attribute: TRANSLATION_LANGUAGE_REFINEMENT,
-    title: 'Translation Language',
-    isSortedAlphabetical: true,
-  });
+if (languageFacetIndex >= 0) {
+  const existingTranslationLanguageFacetIndex = SEARCH_FACET_FILTERS.findIndex(
+    (facetFilter) => facetFilter.attribute === TRANSLATION_LANGUAGE_REFINEMENT,
+  );
+  const translationLanguageFacet = existingTranslationLanguageFacetIndex >= 0
+    ? SEARCH_FACET_FILTERS[existingTranslationLanguageFacetIndex]
+    : {
+      attribute: TRANSLATION_LANGUAGE_REFINEMENT,
+      title: 'Translation Language',
+      isSortedAlphabetical: true,
+    };
+  if (existingTranslationLanguageFacetIndex >= 0) {
+    SEARCH_FACET_FILTERS.splice(existingTranslationLanguageFacetIndex, 1);
+  }
+  const insertAt = SEARCH_FACET_FILTERS.findIndex(
+    (facetFilter) => facetFilter.attribute === LANGUAGE_REFINEMENT,
+  ) + 1;
+  SEARCH_FACET_FILTERS.splice(insertAt, 0, translationLanguageFacet);
 }
 
 export { SEARCH_FACET_FILTERS };

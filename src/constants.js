@@ -23,6 +23,9 @@ export const CONTENT_TYPE_REFINEMENT = 'content_type';
 export const COURSE_TYPE_REFINEMENT = 'course_type';
 export const LEARNING_TYPE_REFINEMENT = 'learning_type';
 export const NEW_CONTENT_REFINEMENT = 'is_new_content';
+export const LANGUAGE_REFINEMENT = 'language';
+export const TRANSLATION_LANGUAGE_REFINEMENT = 'translation_languages';
+export const TRANSCRIPT_LANGUAGE_REFINEMENT = 'transcript_languages';
 
 // Page refinement settings
 export const HIDE_CARDS_REFINEMENT = 'hide_cards';
@@ -73,6 +76,29 @@ export const progressBarDuration = 30000; // 30 seconds in milliseconds
 export const targetProgressBarValue = 95;
 
 const OVERRIDE_FACET_FILTERS = [];
+
+const LANGUAGE_FACET_OVERRIDE = {
+  overrideSearchKey: 'title',
+  overrideSearchValue: 'Language',
+  updatedFacetFilterValue: {
+    attribute: LANGUAGE_REFINEMENT,
+    title: 'Course Language',
+    isSortedAlphabetical: true,
+  },
+};
+OVERRIDE_FACET_FILTERS.push(LANGUAGE_FACET_OVERRIDE);
+
+const TRANSCRIPT_LANGUAGE_FACET_OVERRIDE = {
+  overrideSearchKey: 'title',
+  overrideSearchValue: 'Subtitle',
+  updatedFacetFilterValue: {
+    attribute: TRANSCRIPT_LANGUAGE_REFINEMENT,
+    title: 'Transcript Language',
+    isSortedAlphabetical: true,
+  },
+};
+OVERRIDE_FACET_FILTERS.push(TRANSCRIPT_LANGUAGE_FACET_OVERRIDE);
+
 if (features.PROGRAM_TYPE_FACET) {
   const PROGRAM_TYPE_FACET_OVERRIDE = {
     overrideSearchKey: 'title',
@@ -102,5 +128,21 @@ OVERRIDE_FACET_FILTERS.forEach(
     });
   },
 );
+
+// Add the Translation Language facet directly after Course Language, so the
+// filter order reads: Course Language, Translation Language, Transcript Language.
+const languageFacetIndex = SEARCH_FACET_FILTERS.findIndex(
+  (facetFilter) => facetFilter.attribute === LANGUAGE_REFINEMENT,
+);
+const hasTranslationLanguageFacet = SEARCH_FACET_FILTERS.some(
+  (facetFilter) => facetFilter.attribute === TRANSLATION_LANGUAGE_REFINEMENT,
+);
+if (languageFacetIndex >= 0 && !hasTranslationLanguageFacet) {
+  SEARCH_FACET_FILTERS.splice(languageFacetIndex + 1, 0, {
+    attribute: TRANSLATION_LANGUAGE_REFINEMENT,
+    title: 'Translation Language',
+    isSortedAlphabetical: true,
+  });
+}
 
 export { SEARCH_FACET_FILTERS };

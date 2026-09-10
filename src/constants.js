@@ -145,34 +145,29 @@ OVERRIDE_FACET_FILTERS.forEach(
 export function getLocalizedSearchFacetFilters(baseFacetFilters, intl) {
   const facetFilters = baseFacetFilters.map((facetFilter) => ({ ...facetFilter }));
 
+  // Match by `attribute` (stable) rather than the current `title` string, which
+  // can change upstream or be localized — and merge into the existing facet
+  // object rather than replacing it outright, so any other properties the
+  // upstream package may set (typeaheadOptions, noDisplay, etc.) survive.
   const languageFacetOverrides = [
     {
-      overrideSearchKey: 'title',
-      overrideSearchValue: 'Language',
-      updatedFacetFilterValue: {
-        attribute: LANGUAGE_REFINEMENT,
-        title: intl.formatMessage(messages['searchFacetFilters.courseLanguage.title']),
-        isSortedAlphabetical: true,
-      },
+      matchAttribute: LANGUAGE_REFINEMENT,
+      title: intl.formatMessage(messages['searchFacetFilters.courseLanguage.title']),
     },
     {
-      overrideSearchKey: 'title',
-      overrideSearchValue: 'Subtitle',
-      updatedFacetFilterValue: {
-        attribute: TRANSCRIPT_LANGUAGE_REFINEMENT,
-        title: intl.formatMessage(messages['searchFacetFilters.transcriptLanguage.title']),
-        isSortedAlphabetical: true,
-      },
+      matchAttribute: TRANSCRIPT_LANGUAGE_REFINEMENT,
+      title: intl.formatMessage(messages['searchFacetFilters.transcriptLanguage.title']),
     },
   ];
-  languageFacetOverrides.forEach(({ overrideSearchKey, overrideSearchValue, updatedFacetFilterValue }) => {
-    facetFilters.find((facetFilter, index) => {
-      if (facetFilter[overrideSearchKey] === overrideSearchValue) {
-        facetFilters[index] = updatedFacetFilterValue;
-        return true;
-      }
-      return false;
-    });
+  languageFacetOverrides.forEach(({ matchAttribute, title }) => {
+    const index = facetFilters.findIndex((facetFilter) => facetFilter.attribute === matchAttribute);
+    if (index >= 0) {
+      facetFilters[index] = {
+        ...facetFilters[index],
+        title,
+        isSortedAlphabetical: true,
+      };
+    }
   });
 
   const languageFacetIndex = facetFilters.findIndex(

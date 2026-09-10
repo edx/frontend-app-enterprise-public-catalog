@@ -40,11 +40,7 @@ const SearchFacetFiltersOverride = ({ variant }) => {
   return useMemo(() => updatedFacetFilter.reduce((elements, {
     title, attribute, isSortedAlphabetical, typeaheadOptions, noDisplay,
   }) => {
-    // Force Learning Type (and everything after it) onto a new row instead of
-    // overflowing the filter bar, now that there are too many facets to fit
-    // on one line. `w-100` gives this element the full row width, which in a
-    // wrapping flex container pushes every following item onto the next line
-    // regardless of exact viewport width.
+    // Force Learning Type (and everything after it) onto a new row instead of overflowing the filter bar.
     if (attribute === LEARNING_TYPE_REFINEMENT) {
       elements.push(<div key="facet-row-break" className="w-100" aria-hidden="true" />);
     }

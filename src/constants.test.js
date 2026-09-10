@@ -22,9 +22,19 @@ import {
   LANGUAGE_REFINEMENT,
   TRANSLATION_LANGUAGE_REFINEMENT,
   TRANSCRIPT_LANGUAGE_REFINEMENT,
+  applyLanguageFacetFilterOverrides,
 } from './constants';
 
+// Mock intl object to return `defaultMessage` of the argument.
+const intl = {
+  formatMessage: (message) => message.defaultMessage,
+};
+
 describe('search facet filter overrides for ENT-12318', () => {
+  beforeAll(() => {
+    applyLanguageFacetFilterOverrides(intl);
+  });
+
   it('renames the language facet from "Language" to "Course Language"', () => {
     expect(SEARCH_FACET_FILTERS.find((f) => f.attribute === LANGUAGE_REFINEMENT)).toMatchObject({
       attribute: LANGUAGE_REFINEMENT,
@@ -63,6 +73,17 @@ describe('search facet filter overrides for ENT-12318', () => {
     expect(translationIndex).toBe(languageIndex + 1);
     expect(transcriptIndex).toBe(translationIndex + 1);
   });
+
+  it('resolves facet titles through intl.formatMessage rather than hardcoded strings', () => {
+    const formatMessageSpy = jest.fn((message) => message.defaultMessage);
+    applyLanguageFacetFilterOverrides({ formatMessage: formatMessageSpy });
+    expect(formatMessageSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'searchFacetFilters.courseLanguage.title' }),
+    );
+    expect(formatMessageSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'searchFacetFilters.transcriptLanguage.title' }),
+    );
+  });
 });
 
 describe('search facet filter overrides when translation_languages already exists upstream', () => {
@@ -89,7 +110,10 @@ describe('search facet filter overrides when translation_languages already exist
       SEARCH_FACET_FILTERS: filtersWithPreexistingTranslation,
       LANGUAGE_REFINEMENT: languageRefinement,
       TRANSLATION_LANGUAGE_REFINEMENT: translationLanguageRefinement,
+      applyLanguageFacetFilterOverrides: applyOverridesFresh,
     } = constantsModule;
+
+    applyOverridesFresh(intl);
 
     const languageIndex = filtersWithPreexistingTranslation
       .findIndex((f) => f.attribute === languageRefinement);
@@ -99,5 +123,12 @@ describe('search facet filter overrides when translation_languages already exist
     expect(filtersWithPreexistingTranslation.filter(
       (f) => f.attribute === translationLanguageRefinement,
     )).toHaveLength(1);
+    // The upstream object's own title ("Translation Languages") must not leak
+    // through — it should always be normalized to the intended singular label.
+    expect(filtersWithPreexistingTranslation[translationIndex]).toMatchObject({
+      attribute: translationLanguageRefinement,
+      title: 'Translation Language',
+      isSortedAlphabetical: true,
+    });
   });
 });

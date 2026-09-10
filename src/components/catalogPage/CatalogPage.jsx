@@ -22,6 +22,7 @@ import {
   QUERY_TITLE_REFINEMENT,
   HIDE_CARDS_REFINEMENT,
   TRACKING_APP_NAME,
+  applyLanguageFacetFilterOverrides,
 } from '../../constants';
 
 const learningType = {
@@ -48,6 +49,7 @@ if (features.NEW_CONTENT_FACET && isMissingNewContentRefinement) {
 
 const CatalogPage = () => {
   const intl = useIntl();
+  applyLanguageFacetFilterOverrides(intl);
   const location = useLocation();
   const config = getConfig();
 

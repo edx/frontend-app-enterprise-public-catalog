@@ -127,17 +127,24 @@ OVERRIDE_FACET_FILTERS.forEach(
 );
 
 /**
- * Renames "Language" -> Course Language and "Subtitle" -> Transcript Language,
- * and repositions (or inserts) Translation Language directly after Course
- * Language, so the filter order reads: Course Language, Translation Language,
- * Transcript Language — even if translation_languages already exists elsewhere
- * in the upstream facet list (e.g. if a future package version adds it).
+ * Returns a NEW facet filter list with "Language" renamed to Course Language,
+ * "Subtitle" renamed to Transcript Language, and Translation Language
+ * repositioned (or inserted) directly after Course Language, so the filter
+ * order reads: Course Language, Translation Language, Transcript Language —
+ * even if translation_languages already exists elsewhere in `baseFacetFilters`
+ * (e.g. if a future package version adds it).
  *
- * Requires `intl` (only available at render time via useIntl()), so this can't
- * run as a module-level side effect like the overrides above — the caller is
- * responsible for invoking it once `intl` is available (see CatalogPage.jsx).
+ * This is a pure function: it never mutates `baseFacetFilters` or any facet
+ * object within it. Requires `intl` (only available at render time via
+ * useIntl()), so the caller is responsible for invoking it once `intl` is
+ * available — e.g. inside a useMemo keyed on `intl` (see CatalogPage.jsx).
+ * Renaming/reordering the shared SEARCH_FACET_FILTERS singleton in place here
+ * would be a side effect during render, which is unsafe under StrictMode's
+ * double-invocation and concurrent rendering.
  */
-export function applyLanguageFacetFilterOverrides(intl) {
+export function getLocalizedSearchFacetFilters(baseFacetFilters, intl) {
+  const facetFilters = baseFacetFilters.map((facetFilter) => ({ ...facetFilter }));
+
   const languageFacetOverrides = [
     {
       overrideSearchKey: 'title',
@@ -159,20 +166,20 @@ export function applyLanguageFacetFilterOverrides(intl) {
     },
   ];
   languageFacetOverrides.forEach(({ overrideSearchKey, overrideSearchValue, updatedFacetFilterValue }) => {
-    SEARCH_FACET_FILTERS.find((facetFilter, index) => {
+    facetFilters.find((facetFilter, index) => {
       if (facetFilter[overrideSearchKey] === overrideSearchValue) {
-        SEARCH_FACET_FILTERS[index] = updatedFacetFilterValue;
+        facetFilters[index] = updatedFacetFilterValue;
         return true;
       }
       return false;
     });
   });
 
-  const languageFacetIndex = SEARCH_FACET_FILTERS.findIndex(
+  const languageFacetIndex = facetFilters.findIndex(
     (facetFilter) => facetFilter.attribute === LANGUAGE_REFINEMENT,
   );
   if (languageFacetIndex >= 0) {
-    const existingTranslationLanguageFacetIndex = SEARCH_FACET_FILTERS.findIndex(
+    const existingTranslationLanguageFacetIndex = facetFilters.findIndex(
       (facetFilter) => facetFilter.attribute === TRANSLATION_LANGUAGE_REFINEMENT,
     );
     // Normalize the title and sort behavior even when reusing an existing
@@ -180,19 +187,21 @@ export function applyLanguageFacetFilterOverrides(intl) {
     // leaks through instead of the intended "Translation Language".
     const translationLanguageFacet = {
       ...(existingTranslationLanguageFacetIndex >= 0
-        ? SEARCH_FACET_FILTERS[existingTranslationLanguageFacetIndex]
+        ? facetFilters[existingTranslationLanguageFacetIndex]
         : { attribute: TRANSLATION_LANGUAGE_REFINEMENT }),
       title: intl.formatMessage(messages['searchFacetFilters.translationLanguage.title']),
       isSortedAlphabetical: true,
     };
     if (existingTranslationLanguageFacetIndex >= 0) {
-      SEARCH_FACET_FILTERS.splice(existingTranslationLanguageFacetIndex, 1);
+      facetFilters.splice(existingTranslationLanguageFacetIndex, 1);
     }
-    const insertAt = SEARCH_FACET_FILTERS.findIndex(
+    const insertAt = facetFilters.findIndex(
       (facetFilter) => facetFilter.attribute === LANGUAGE_REFINEMENT,
     ) + 1;
-    SEARCH_FACET_FILTERS.splice(insertAt, 0, translationLanguageFacet);
+    facetFilters.splice(insertAt, 0, translationLanguageFacet);
   }
+
+  return facetFilters;
 }
 
 export { SEARCH_FACET_FILTERS };

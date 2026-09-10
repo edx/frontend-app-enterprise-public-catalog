@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   SearchData,
@@ -22,7 +22,7 @@ import {
   QUERY_TITLE_REFINEMENT,
   HIDE_CARDS_REFINEMENT,
   TRACKING_APP_NAME,
-  applyLanguageFacetFilterOverrides,
+  getLocalizedSearchFacetFilters,
 } from '../../constants';
 
 const learningType = {
@@ -49,7 +49,12 @@ if (features.NEW_CONTENT_FACET && isMissingNewContentRefinement) {
 
 const CatalogPage = () => {
   const intl = useIntl();
-  applyLanguageFacetFilterOverrides(intl);
+  // Pure derivation — does not mutate the shared SEARCH_FACET_FILTERS singleton,
+  // and is memoized so it only recomputes when the active locale changes.
+  const searchFacetFilters = useMemo(
+    () => getLocalizedSearchFacetFilters(SEARCH_FACET_FILTERS, intl),
+    [intl],
+  );
   const location = useLocation();
   const config = getConfig();
 
@@ -148,7 +153,7 @@ const CatalogPage = () => {
       <SearchData
         trackingName={TRACKING_APP_NAME}
         searchFacetFilters={[
-          ...SEARCH_FACET_FILTERS,
+          ...searchFacetFilters,
           {
             attribute: QUERY_TITLE_REFINEMENT,
             title: 'Catalog Titles',

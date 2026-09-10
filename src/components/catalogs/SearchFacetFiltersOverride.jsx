@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { FacetListRefinement, SearchContext } from '@2uinc/frontend-enterprise-catalog-search';
-import { NEW_CONTENT_REFINEMENT } from '../../constants';
+import { LEARNING_TYPE_REFINEMENT, NEW_CONTENT_REFINEMENT } from '../../constants';
 import features from '../../config';
 
 const TRUE_VALUE = 'true';
@@ -37,24 +37,35 @@ const SearchFacetFiltersOverride = ({ variant }) => {
     [searchFacetFilters],
   );
 
-  return useMemo(() => updatedFacetFilter.map(({
+  return useMemo(() => updatedFacetFilter.reduce((elements, {
     title, attribute, isSortedAlphabetical, typeaheadOptions, noDisplay,
-  }) => (
-    <FacetListRefinement
-      key={attribute}
-      title={title}
-      attribute={attribute}
-      limit={300}
-      transformItems={getTransformItems({ attribute, isSortedAlphabetical })}
-      refinements={refinements}
-      defaultRefinement={refinements[attribute]}
-      facetValueType="array"
-      typeaheadOptions={typeaheadOptions}
-      searchable={!!typeaheadOptions}
-      variant={variant}
-      noDisplay={noDisplay}
-    />
-  )), [updatedFacetFilter, refinements, variant]);
+  }) => {
+    // Force Learning Type (and everything after it) onto a new row instead of
+    // overflowing the filter bar, now that there are too many facets to fit
+    // on one line. `w-100` gives this element the full row width, which in a
+    // wrapping flex container pushes every following item onto the next line
+    // regardless of exact viewport width.
+    if (attribute === LEARNING_TYPE_REFINEMENT) {
+      elements.push(<div key="facet-row-break" className="w-100" aria-hidden="true" />);
+    }
+    elements.push(
+      <FacetListRefinement
+        key={attribute}
+        title={title}
+        attribute={attribute}
+        limit={300}
+        transformItems={getTransformItems({ attribute, isSortedAlphabetical })}
+        refinements={refinements}
+        defaultRefinement={refinements[attribute]}
+        facetValueType="array"
+        typeaheadOptions={typeaheadOptions}
+        searchable={!!typeaheadOptions}
+        variant={variant}
+        noDisplay={noDisplay}
+      />,
+    );
+    return elements;
+  }, []), [updatedFacetFilter, refinements, variant]);
 };
 
 SearchFacetFiltersOverride.propTypes = {

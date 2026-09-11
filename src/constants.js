@@ -1,6 +1,25 @@
 /* eslint-disable import/prefer-default-export */
+import { defineMessages } from '@edx/frontend-platform/i18n';
 import { SEARCH_FACET_FILTERS } from '@2uinc/frontend-enterprise-catalog-search';
 import features from './config';
+
+const messages = defineMessages({
+  'searchFacetFilters.courseLanguage.title': {
+    id: 'searchFacetFilters.courseLanguage.title',
+    defaultMessage: 'Course Language',
+    description: 'Title for the course language facet filter (renamed from "Language")',
+  },
+  'searchFacetFilters.translationLanguage.title': {
+    id: 'searchFacetFilters.translationLanguage.title',
+    defaultMessage: 'Translation Language',
+    description: 'Title for the translation language facet filter',
+  },
+  'searchFacetFilters.transcriptLanguage.title': {
+    id: 'searchFacetFilters.transcriptLanguage.title',
+    defaultMessage: 'Transcript Language',
+    description: 'Title for the transcript language facet filter (renamed from "Subtitle")',
+  },
+});
 
 export const PAGE_TITLE = 'edX Enterprise Catalogs';
 
@@ -23,6 +42,9 @@ export const CONTENT_TYPE_REFINEMENT = 'content_type';
 export const COURSE_TYPE_REFINEMENT = 'course_type';
 export const LEARNING_TYPE_REFINEMENT = 'learning_type';
 export const NEW_CONTENT_REFINEMENT = 'is_new_content';
+export const LANGUAGE_REFINEMENT = 'language';
+export const TRANSLATION_LANGUAGE_REFINEMENT = 'translation_languages';
+export const TRANSCRIPT_LANGUAGE_REFINEMENT = 'transcript_languages';
 
 // Page refinement settings
 export const HIDE_CARDS_REFINEMENT = 'hide_cards';
@@ -73,6 +95,7 @@ export const progressBarDuration = 30000; // 30 seconds in milliseconds
 export const targetProgressBarValue = 95;
 
 const OVERRIDE_FACET_FILTERS = [];
+
 if (features.PROGRAM_TYPE_FACET) {
   const PROGRAM_TYPE_FACET_OVERRIDE = {
     overrideSearchKey: 'title',
@@ -102,5 +125,78 @@ OVERRIDE_FACET_FILTERS.forEach(
     });
   },
 );
+
+/**
+ * Returns a NEW facet filter list with "Language" renamed to Course Language,
+ * "Subtitle" renamed to Transcript Language, and Translation Language
+ * repositioned (or inserted) directly after Course Language, so the filter
+ * order reads: Course Language, Translation Language, Transcript Language —
+ * even if translation_languages already exists elsewhere in `baseFacetFilters`
+ * (e.g. if a future package version adds it).
+ *
+ * This is a pure function: it never mutates `baseFacetFilters` or any facet
+ * object within it. Requires `intl` (only available at render time via
+ * useIntl()), so the caller is responsible for invoking it once `intl` is
+ * available — e.g. inside a useMemo keyed on `intl` (see CatalogPage.jsx).
+ * Renaming/reordering the shared SEARCH_FACET_FILTERS singleton in place here
+ * would be a side effect during render, which is unsafe under StrictMode's
+ * double-invocation and concurrent rendering.
+ */
+export function getLocalizedSearchFacetFilters(baseFacetFilters, intl) {
+  const facetFilters = baseFacetFilters.map((facetFilter) => ({ ...facetFilter }));
+
+  // Match by `attribute` (stable) rather than the current `title` string, which
+  // can change upstream or be localized — and merge into the existing facet
+  // object rather than replacing it outright, so any other properties the
+  // upstream package may set (typeaheadOptions, noDisplay, etc.) survive.
+  const languageFacetOverrides = [
+    {
+      matchAttribute: LANGUAGE_REFINEMENT,
+      title: intl.formatMessage(messages['searchFacetFilters.courseLanguage.title']),
+    },
+    {
+      matchAttribute: TRANSCRIPT_LANGUAGE_REFINEMENT,
+      title: intl.formatMessage(messages['searchFacetFilters.transcriptLanguage.title']),
+    },
+  ];
+  languageFacetOverrides.forEach(({ matchAttribute, title }) => {
+    const index = facetFilters.findIndex((facetFilter) => facetFilter.attribute === matchAttribute);
+    if (index >= 0) {
+      facetFilters[index] = {
+        ...facetFilters[index],
+        title,
+        isSortedAlphabetical: true,
+      };
+    }
+  });
+
+  const languageFacetIndex = facetFilters.findIndex(
+    (facetFilter) => facetFilter.attribute === LANGUAGE_REFINEMENT,
+  );
+  if (languageFacetIndex >= 0) {
+    const existingTranslationLanguageFacetIndex = facetFilters.findIndex(
+      (facetFilter) => facetFilter.attribute === TRANSLATION_LANGUAGE_REFINEMENT,
+    );
+    // Normalize the title and sort behavior even when reusing an existing
+    // facet object, so an upstream label (e.g. "Translation Languages") never
+    // leaks through instead of the intended "Translation Language".
+    const translationLanguageFacet = {
+      ...(existingTranslationLanguageFacetIndex >= 0
+        ? facetFilters[existingTranslationLanguageFacetIndex]
+        : { attribute: TRANSLATION_LANGUAGE_REFINEMENT }),
+      title: intl.formatMessage(messages['searchFacetFilters.translationLanguage.title']),
+      isSortedAlphabetical: true,
+    };
+    if (existingTranslationLanguageFacetIndex >= 0) {
+      facetFilters.splice(existingTranslationLanguageFacetIndex, 1);
+    }
+    const insertAt = facetFilters.findIndex(
+      (facetFilter) => facetFilter.attribute === LANGUAGE_REFINEMENT,
+    ) + 1;
+    facetFilters.splice(insertAt, 0, translationLanguageFacet);
+  }
+
+  return facetFilters;
+}
 
 export { SEARCH_FACET_FILTERS };

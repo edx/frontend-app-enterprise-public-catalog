@@ -169,4 +169,13 @@
   margin-bottom: 0.5rem;
   // Keep each button at its natural width instead of flex-shrinking.
   flex-shrink: 0;
+
+  .dropdown.mr-md-3 {
+    margin-right: 0.5rem !important;
+  }
+
+  .btn.dropdown-toggle {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
 }

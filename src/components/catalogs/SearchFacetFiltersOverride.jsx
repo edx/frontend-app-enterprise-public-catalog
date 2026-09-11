@@ -50,11 +50,10 @@ const renderFacet = (facet, { refinements, variant }) => {
   );
 };
 
-// Like the shared package's SearchFilters, but collapses is_new_content to its true row, and
-// splits into two explicit rows so Learning Type onward always lands on its own row — not just
-// "when it happens to overflow", since exactly how many facets fit per row varies with the active
-// Paragon theme (branded deploys render noticeably larger buttons than an unthemed local build).
-// Both rows use flex-wrap (not nowrap/overflow) — each FacetListRefinement's dropdown menu.
+
+// Both rows use flex-wrap, deliberately NOT flex-nowrap/overflow. Each facet's dropdown menu
+// (FacetListRefinement -> FacetDropdown -> Paragon Dropdown.Menu, ultimately react-overlays'
+// DropdownMenu) renders as a real DOM descendant of its row.
 const SearchFacetFiltersOverride = ({ variant }) => {
   const { refinements, searchFacetFilters } = useContext(SearchContext);
 

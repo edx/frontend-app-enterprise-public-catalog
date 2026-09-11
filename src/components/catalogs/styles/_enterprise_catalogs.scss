@@ -167,6 +167,6 @@
 
 .enterprise-catalogs-header .facet-list {
   margin-bottom: 0.5rem;
-  // Keep buttons at natural width; scroll horizontally if they don't fit.
+  // Keep each button at its natural width instead of flex-shrinking.
   flex-shrink: 0;
 }

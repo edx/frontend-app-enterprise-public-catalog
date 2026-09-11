@@ -54,8 +54,7 @@ const renderFacet = (facet, { refinements, variant }) => {
 // splits into two explicit rows so Learning Type onward always lands on its own row — not just
 // "when it happens to overflow", since exactly how many facets fit per row varies with the active
 // Paragon theme (branded deploys render noticeably larger buttons than an unthemed local build).
-// The first row never wraps internally (it scrolls horizontally in the rare case it doesn't fit),
-// so the layout is always exactly two rows regardless of theme or viewport.
+// Both rows use flex-wrap (not nowrap/overflow) — each FacetListRefinement's dropdown menu.
 const SearchFacetFiltersOverride = ({ variant }) => {
   const { refinements, searchFacetFilters } = useContext(SearchContext);
 
@@ -78,7 +77,7 @@ const SearchFacetFiltersOverride = ({ variant }) => {
 
     return (
       <>
-        <div className="d-flex flex-nowrap overflow-auto w-100">
+        <div className="d-flex flex-wrap w-100">
           {mainRowFacets.map((facet) => renderFacet(facet, renderOptions))}
         </div>
         {secondRowFacets.length > 0 && (

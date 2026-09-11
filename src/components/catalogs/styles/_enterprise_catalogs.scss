@@ -159,11 +159,7 @@
   }
 }
 
-// The desktop facet row (@2uinc/frontend-enterprise-catalog-search's SearchFilters
-// renders it as a plain `.d-flex` with no wrap rule) overflows instead of wrapping
-// once there are too many facets to fit on one line. Allow it to wrap, and give
-// the wrapped-in facets some breathing room since FacetDropdown only adds
-// right-margin (`mr-md-3`), not bottom-margin, between buttons.
+
 .enterprise-catalogs-header [data-testid='filters-col'] > .d-flex {
   flex-wrap: wrap;
   row-gap: 0.5rem;
@@ -171,4 +167,6 @@
 
 .enterprise-catalogs-header .facet-list {
   margin-bottom: 0.5rem;
+  // Keep buttons at natural width; scroll horizontally if they don't fit.
+  flex-shrink: 0;
 }

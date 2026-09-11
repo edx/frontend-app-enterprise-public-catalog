@@ -104,7 +104,7 @@ describe('SearchFacetFiltersOverride', () => {
     expect(screen.getByTestId('facet-partners.name')).toBeInTheDocument();
   });
 
-  it('inserts a row-break element directly before learning_type so it and later facets wrap onto a new row', () => {
+  it('renders main facets in a first row and learning_type onward in a separate second row', () => {
     mockFeatures.NEW_CONTENT_FACET = true;
     const facets = [
       ...baseFacets,
@@ -112,20 +112,21 @@ describe('SearchFacetFiltersOverride', () => {
       { attribute: 'is_new_content', title: 'Latest Offerings' },
     ];
     const { container } = renderWithContext(facets);
-    const children = Array.from(container.children).map(
-      (child) => (child.classList.contains('w-100') ? 'break' : child.getAttribute('data-testid')),
-    );
-    expect(children).toEqual([
-      'facet-skill_names',
-      'facet-partners.name',
-      'break',
-      'facet-learning_type',
-      'facet-is_new_content',
-    ]);
+    const rows = Array.from(container.children);
+    expect(rows).toHaveLength(2);
+
+    const firstRowTestIds = Array.from(rows[0].children).map((child) => child.getAttribute('data-testid'));
+    expect(firstRowTestIds).toEqual(['facet-skill_names', 'facet-partners.name']);
+
+    const secondRowTestIds = Array.from(rows[1].children).map((child) => child.getAttribute('data-testid'));
+    expect(secondRowTestIds).toEqual(['facet-learning_type', 'facet-is_new_content']);
   });
 
-  it('does not insert a row-break element when learning_type is not in the facet list', () => {
+  it('renders a single row (no second row) when learning_type is not in the facet list', () => {
     const { container } = renderWithContext(baseFacets);
-    expect(container.querySelector('.w-100')).not.toBeInTheDocument();
+    expect(container.children).toHaveLength(1);
+    const firstRowTestIds = Array.from(container.children[0].children)
+      .map((child) => child.getAttribute('data-testid'));
+    expect(firstRowTestIds).toEqual(['facet-skill_names', 'facet-partners.name']);
   });
 });

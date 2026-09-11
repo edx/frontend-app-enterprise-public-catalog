@@ -28,7 +28,34 @@ const filterFacetItems = ({ attribute }) => {
   return true;
 };
 
-// Like the shared package's SearchFilters, but collapses is_new_content to its true row.
+const renderFacet = (facet, { refinements, variant }) => {
+  const {
+    title, attribute, isSortedAlphabetical, typeaheadOptions, noDisplay,
+  } = facet;
+  return (
+    <FacetListRefinement
+      key={attribute}
+      title={title}
+      attribute={attribute}
+      limit={300}
+      transformItems={getTransformItems({ attribute, isSortedAlphabetical })}
+      refinements={refinements}
+      defaultRefinement={refinements[attribute]}
+      facetValueType="array"
+      typeaheadOptions={typeaheadOptions}
+      searchable={!!typeaheadOptions}
+      variant={variant}
+      noDisplay={noDisplay}
+    />
+  );
+};
+
+// Like the shared package's SearchFilters, but collapses is_new_content to its true row, and
+// splits into two explicit rows so Learning Type onward always lands on its own row — not just
+// "when it happens to overflow", since exactly how many facets fit per row varies with the active
+// Paragon theme (branded deploys render noticeably larger buttons than an unthemed local build).
+// The first row never wraps internally (it scrolls horizontally in the rare case it doesn't fit),
+// so the layout is always exactly two rows regardless of theme or viewport.
 const SearchFacetFiltersOverride = ({ variant }) => {
   const { refinements, searchFacetFilters } = useContext(SearchContext);
 
@@ -37,31 +64,31 @@ const SearchFacetFiltersOverride = ({ variant }) => {
     [searchFacetFilters],
   );
 
-  return useMemo(() => updatedFacetFilter.reduce((elements, {
-    title, attribute, isSortedAlphabetical, typeaheadOptions, noDisplay,
-  }) => {
-    // Force Learning Type (and everything after it) onto a new row instead of overflowing the filter bar.
-    if (attribute === LEARNING_TYPE_REFINEMENT) {
-      elements.push(<div key="facet-row-break" className="w-100" aria-hidden="true" />);
-    }
-    elements.push(
-      <FacetListRefinement
-        key={attribute}
-        title={title}
-        attribute={attribute}
-        limit={300}
-        transformItems={getTransformItems({ attribute, isSortedAlphabetical })}
-        refinements={refinements}
-        defaultRefinement={refinements[attribute]}
-        facetValueType="array"
-        typeaheadOptions={typeaheadOptions}
-        searchable={!!typeaheadOptions}
-        variant={variant}
-        noDisplay={noDisplay}
-      />,
+  return useMemo(() => {
+    const learningTypeIndex = updatedFacetFilter.findIndex(
+      ({ attribute }) => attribute === LEARNING_TYPE_REFINEMENT,
     );
-    return elements;
-  }, []), [updatedFacetFilter, refinements, variant]);
+    const mainRowFacets = learningTypeIndex >= 0
+      ? updatedFacetFilter.slice(0, learningTypeIndex)
+      : updatedFacetFilter;
+    const secondRowFacets = learningTypeIndex >= 0
+      ? updatedFacetFilter.slice(learningTypeIndex)
+      : [];
+    const renderOptions = { refinements, variant };
+
+    return (
+      <>
+        <div className="d-flex flex-nowrap overflow-auto w-100">
+          {mainRowFacets.map((facet) => renderFacet(facet, renderOptions))}
+        </div>
+        {secondRowFacets.length > 0 && (
+          <div className="d-flex flex-wrap w-100">
+            {secondRowFacets.map((facet) => renderFacet(facet, renderOptions))}
+          </div>
+        )}
+      </>
+    );
+  }, [updatedFacetFilter, refinements, variant]);
 };
 
 SearchFacetFiltersOverride.propTypes = {

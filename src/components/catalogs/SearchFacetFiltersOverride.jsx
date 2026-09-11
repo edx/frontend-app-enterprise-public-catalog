@@ -50,7 +50,6 @@ const renderFacet = (facet, { refinements, variant }) => {
   );
 };
 
-
 // Both rows use flex-wrap, deliberately NOT flex-nowrap/overflow. Each facet's dropdown menu
 // (FacetListRefinement -> FacetDropdown -> Paragon Dropdown.Menu, ultimately react-overlays'
 // DropdownMenu) renders as a real DOM descendant of its row.

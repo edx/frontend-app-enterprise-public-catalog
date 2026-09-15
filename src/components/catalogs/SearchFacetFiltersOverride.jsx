@@ -28,13 +28,6 @@ const filterFacetItems = ({ attribute }) => {
   return true;
 };
 
-// TEMPORARY ROLLBACK FOR TESTING (see PR discussion) — like the shared package's SearchFilters,
-// but collapses is_new_content to its true row. Renders every facet as one flat, single wrapping
-// row with no explicit grouping, so the browser's own flex-wrap decides where lines break based
-// on available width. This does NOT guarantee Learning Type/Latest Offerings stay grouped
-// together or land on their own row — a real Stage test earlier showed this natural wrap point
-// can split them apart from each other. Kept only because the user explicitly asked to see this
-// behavior directly before deciding; revert to the explicit two-row split if it doesn't hold up.
 const SearchFacetFiltersOverride = ({ variant }) => {
   const { refinements, searchFacetFilters } = useContext(SearchContext);
 

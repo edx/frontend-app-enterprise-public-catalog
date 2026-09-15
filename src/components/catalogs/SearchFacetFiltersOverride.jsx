@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { FacetListRefinement, SearchContext } from '@2uinc/frontend-enterprise-catalog-search';
-import { LEARNING_TYPE_REFINEMENT, NEW_CONTENT_REFINEMENT } from '../../constants';
+import { NEW_CONTENT_REFINEMENT } from '../../constants';
 import features from '../../config';
 
 const TRUE_VALUE = 'true';
@@ -28,11 +28,24 @@ const filterFacetItems = ({ attribute }) => {
   return true;
 };
 
-const renderFacet = (facet, { refinements, variant }) => {
-  const {
+// TEMPORARY ROLLBACK FOR TESTING (see PR discussion) — like the shared package's SearchFilters,
+// but collapses is_new_content to its true row. Renders every facet as one flat, single wrapping
+// row with no explicit grouping, so the browser's own flex-wrap decides where lines break based
+// on available width. This does NOT guarantee Learning Type/Latest Offerings stay grouped
+// together or land on their own row — a real Stage test earlier showed this natural wrap point
+// can split them apart from each other. Kept only because the user explicitly asked to see this
+// behavior directly before deciding; revert to the explicit two-row split if it doesn't hold up.
+const SearchFacetFiltersOverride = ({ variant }) => {
+  const { refinements, searchFacetFilters } = useContext(SearchContext);
+
+  const updatedFacetFilter = useMemo(
+    () => searchFacetFilters.filter(filterFacetItems),
+    [searchFacetFilters],
+  );
+
+  return useMemo(() => updatedFacetFilter.map(({
     title, attribute, isSortedAlphabetical, typeaheadOptions, noDisplay,
-  } = facet;
-  return (
+  }) => (
     <FacetListRefinement
       key={attribute}
       title={title}
@@ -47,45 +60,7 @@ const renderFacet = (facet, { refinements, variant }) => {
       variant={variant}
       noDisplay={noDisplay}
     />
-  );
-};
-
-// Both rows use flex-wrap, deliberately NOT flex-nowrap/overflow. Each facet's dropdown menu
-// (FacetListRefinement -> FacetDropdown -> Paragon Dropdown.Menu, ultimately react-overlays'
-// DropdownMenu) renders as a real DOM descendant of its row.
-const SearchFacetFiltersOverride = ({ variant }) => {
-  const { refinements, searchFacetFilters } = useContext(SearchContext);
-
-  const updatedFacetFilter = useMemo(
-    () => searchFacetFilters.filter(filterFacetItems),
-    [searchFacetFilters],
-  );
-
-  return useMemo(() => {
-    const learningTypeIndex = updatedFacetFilter.findIndex(
-      ({ attribute }) => attribute === LEARNING_TYPE_REFINEMENT,
-    );
-    const mainRowFacets = learningTypeIndex >= 0
-      ? updatedFacetFilter.slice(0, learningTypeIndex)
-      : updatedFacetFilter;
-    const secondRowFacets = learningTypeIndex >= 0
-      ? updatedFacetFilter.slice(learningTypeIndex)
-      : [];
-    const renderOptions = { refinements, variant };
-
-    return (
-      <>
-        <div className="d-flex flex-wrap w-100">
-          {mainRowFacets.map((facet) => renderFacet(facet, renderOptions))}
-        </div>
-        {secondRowFacets.length > 0 && (
-          <div className="d-flex flex-wrap w-100">
-            {secondRowFacets.map((facet) => renderFacet(facet, renderOptions))}
-          </div>
-        )}
-      </>
-    );
-  }, [updatedFacetFilter, refinements, variant]);
+  )), [updatedFacetFilter, refinements, variant]);
 };
 
 SearchFacetFiltersOverride.propTypes = {

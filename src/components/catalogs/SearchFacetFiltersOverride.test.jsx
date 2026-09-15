@@ -104,7 +104,7 @@ describe('SearchFacetFiltersOverride', () => {
     expect(screen.getByTestId('facet-partners.name')).toBeInTheDocument();
   });
 
-  it('renders main facets in a first row and learning_type onward in a separate second row', () => {
+  it('renders all facets as siblings in one flat, unbroken sequence — no explicit row grouping', () => {
     mockFeatures.NEW_CONTENT_FACET = true;
     const facets = [
       ...baseFacets,
@@ -112,21 +112,12 @@ describe('SearchFacetFiltersOverride', () => {
       { attribute: 'is_new_content', title: 'Latest Offerings' },
     ];
     const { container } = renderWithContext(facets);
-    const rows = Array.from(container.children);
-    expect(rows).toHaveLength(2);
-
-    const firstRowTestIds = Array.from(rows[0].children).map((child) => child.getAttribute('data-testid'));
-    expect(firstRowTestIds).toEqual(['facet-skill_names', 'facet-partners.name']);
-
-    const secondRowTestIds = Array.from(rows[1].children).map((child) => child.getAttribute('data-testid'));
-    expect(secondRowTestIds).toEqual(['facet-learning_type', 'facet-is_new_content']);
-  });
-
-  it('renders a single row (no second row) when learning_type is not in the facet list', () => {
-    const { container } = renderWithContext(baseFacets);
-    expect(container.children).toHaveLength(1);
-    const firstRowTestIds = Array.from(container.children[0].children)
-      .map((child) => child.getAttribute('data-testid'));
-    expect(firstRowTestIds).toEqual(['facet-skill_names', 'facet-partners.name']);
+    const testIds = Array.from(container.children).map((child) => child.getAttribute('data-testid'));
+    expect(testIds).toEqual([
+      'facet-skill_names',
+      'facet-partners.name',
+      'facet-learning_type',
+      'facet-is_new_content',
+    ]);
   });
 });

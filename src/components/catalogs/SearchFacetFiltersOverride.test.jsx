@@ -104,7 +104,7 @@ describe('SearchFacetFiltersOverride', () => {
     expect(screen.getByTestId('facet-partners.name')).toBeInTheDocument();
   });
 
-  it('inserts a row-break element directly before learning_type so it and later facets wrap onto a new row', () => {
+  it('renders all facets as siblings in one flat, unbroken sequence — no explicit row grouping', () => {
     mockFeatures.NEW_CONTENT_FACET = true;
     const facets = [
       ...baseFacets,
@@ -112,20 +112,12 @@ describe('SearchFacetFiltersOverride', () => {
       { attribute: 'is_new_content', title: 'Latest Offerings' },
     ];
     const { container } = renderWithContext(facets);
-    const children = Array.from(container.children).map(
-      (child) => (child.classList.contains('w-100') ? 'break' : child.getAttribute('data-testid')),
-    );
-    expect(children).toEqual([
+    const testIds = Array.from(container.children).map((child) => child.getAttribute('data-testid'));
+    expect(testIds).toEqual([
       'facet-skill_names',
       'facet-partners.name',
-      'break',
       'facet-learning_type',
       'facet-is_new_content',
     ]);
-  });
-
-  it('does not insert a row-break element when learning_type is not in the facet list', () => {
-    const { container } = renderWithContext(baseFacets);
-    expect(container.querySelector('.w-100')).not.toBeInTheDocument();
   });
 });

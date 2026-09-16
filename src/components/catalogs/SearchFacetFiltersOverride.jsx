@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { FacetListRefinement, SearchContext } from '@2uinc/frontend-enterprise-catalog-search';
-import { LEARNING_TYPE_REFINEMENT, NEW_CONTENT_REFINEMENT } from '../../constants';
+import { NEW_CONTENT_REFINEMENT } from '../../constants';
 import features from '../../config';
 
 const TRUE_VALUE = 'true';
@@ -28,7 +28,6 @@ const filterFacetItems = ({ attribute }) => {
   return true;
 };
 
-// Like the shared package's SearchFilters, but collapses is_new_content to its true row.
 const SearchFacetFiltersOverride = ({ variant }) => {
   const { refinements, searchFacetFilters } = useContext(SearchContext);
 
@@ -37,31 +36,24 @@ const SearchFacetFiltersOverride = ({ variant }) => {
     [searchFacetFilters],
   );
 
-  return useMemo(() => updatedFacetFilter.reduce((elements, {
+  return useMemo(() => updatedFacetFilter.map(({
     title, attribute, isSortedAlphabetical, typeaheadOptions, noDisplay,
-  }) => {
-    // Force Learning Type (and everything after it) onto a new row instead of overflowing the filter bar.
-    if (attribute === LEARNING_TYPE_REFINEMENT) {
-      elements.push(<div key="facet-row-break" className="w-100" aria-hidden="true" />);
-    }
-    elements.push(
-      <FacetListRefinement
-        key={attribute}
-        title={title}
-        attribute={attribute}
-        limit={300}
-        transformItems={getTransformItems({ attribute, isSortedAlphabetical })}
-        refinements={refinements}
-        defaultRefinement={refinements[attribute]}
-        facetValueType="array"
-        typeaheadOptions={typeaheadOptions}
-        searchable={!!typeaheadOptions}
-        variant={variant}
-        noDisplay={noDisplay}
-      />,
-    );
-    return elements;
-  }, []), [updatedFacetFilter, refinements, variant]);
+  }) => (
+    <FacetListRefinement
+      key={attribute}
+      title={title}
+      attribute={attribute}
+      limit={300}
+      transformItems={getTransformItems({ attribute, isSortedAlphabetical })}
+      refinements={refinements}
+      defaultRefinement={refinements[attribute]}
+      facetValueType="array"
+      typeaheadOptions={typeaheadOptions}
+      searchable={!!typeaheadOptions}
+      variant={variant}
+      noDisplay={noDisplay}
+    />
+  )), [updatedFacetFilter, refinements, variant]);
 };
 
 SearchFacetFiltersOverride.propTypes = {

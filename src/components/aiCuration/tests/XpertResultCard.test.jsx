@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  render, screen, fireEvent, waitFor,
+  render, screen, fireEvent, waitFor, act,
 } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -76,13 +76,19 @@ describe('XpertResultCard', () => {
     expect(defaultProps.onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('updates the threshold value and triggers API call on slider change', async () => {
+  it('updates the threshold value and triggers API call on slider change', () => {
+    jest.useFakeTimers();
     renderXpertResultCard();
     const slider = screen.getByLabelText('Xpert result card slider');
     fireEvent.change(slider, { target: { value: '0.4' } });
 
-    await waitFor(() => expect(mockGetXpertResultsWithThreshold).toHaveBeenCalledTimes(1), { timeout: 1500 });
+    // Deterministically advance past the 300ms setTimeout + 1000ms lodash.debounce
+    // instead of racing wall-clock time with a real-timer waitFor (which was flaky
+    // on loaded CI runners since it only had ~200ms of margin over the 1300ms delay).
+    act(() => jest.advanceTimersByTime(1300));
+    expect(mockGetXpertResultsWithThreshold).toHaveBeenCalledTimes(1);
     expect(mockGetXpertResultsWithThreshold).toHaveBeenCalledWith('task-id', 0.4);
+    jest.useRealTimers();
   });
 
   it('displays error message when there is an error', () => {

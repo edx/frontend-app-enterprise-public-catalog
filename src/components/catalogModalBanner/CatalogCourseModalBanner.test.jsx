@@ -14,22 +14,22 @@ const renderBanner = (props) => render(
 describe('<CatalogCourseModalBanner />', () => {
   test('renders both start and end dates together when both are known', () => {
     renderBanner({
-      startDate: '2026-08-16T00:00:00Z',
-      endDate: '2026-10-14T00:00:00Z',
+      startDate: '3000-08-16T00:00:00Z',
+      endDate: '3000-10-14T00:00:00Z',
     });
     expect(
-      screen.getByText(`Session starts ${formatSessionDate(new Date('2026-08-16T00:00:00Z'))} | Session ends ${formatSessionDate(new Date('2026-10-14T00:00:00Z'))}`),
+      screen.getByText(`Session starts ${formatSessionDate(new Date('3000-08-16T00:00:00Z'))} | Session ends ${formatSessionDate(new Date('3000-10-14T00:00:00Z'))}`),
     ).toBeInTheDocument();
   });
 
   test('appends the upcoming session count when both dates are known', () => {
     renderBanner({
-      startDate: '2026-08-16T00:00:00Z',
-      endDate: '2026-10-14T00:00:00Z',
+      startDate: '3000-08-16T00:00:00Z',
+      endDate: '3000-10-14T00:00:00Z',
       upcomingRuns: 2,
     });
     expect(
-      screen.getByText(`Session starts ${formatSessionDate(new Date('2026-08-16T00:00:00Z'))} | Session ends ${formatSessionDate(new Date('2026-10-14T00:00:00Z'))} • 2 additional session(s)`),
+      screen.getByText(`Session starts ${formatSessionDate(new Date('3000-08-16T00:00:00Z'))} | Session ends ${formatSessionDate(new Date('3000-10-14T00:00:00Z'))} • 2 additional session(s)`),
     ).toBeInTheDocument();
   });
 
